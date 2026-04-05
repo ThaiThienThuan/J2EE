@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Thông báo – RentalMS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    :root {
+      --primary:#E8622A; --primary-light:#F08050; --primary-dark:#C94E1A;
+      --secondary:#F2C185; --bg:#F0F4F8; --navbar-bg:#1B2B4B;
+      --text:#1B2B4B; --text-light:#5A6A82; --border:#DDE3EC;
+      --success:#2D8A4E; --warning:#E8A82A; --danger:#C0392B;
+      --shadow:0 4px 20px rgba(27,43,75,.10); --radius:14px;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);}
+
+    /* NAVBAR */
+    .topnav{position:fixed;top:0;left:0;right:0;height:64px;background:var(--navbar-bg);
+      display:flex;align-items:center;padding:0 28px;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.18);}
+    .topnav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;margin-right:20px;}
+    .logo-icon{width:38px;height:38px;background:var(--primary);border-radius:10px;
+      display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;}
+    .logo-text{font-family:'Playfair Display',serif;font-size:20px;color:#fff;}
+    .logo-text span{color:var(--secondary);}
+    .topnav-title{color:rgba(255,255,255,.75);font-size:14px;font-weight:600;
+      display:flex;align-items:center;gap:8px;}
+    .topnav-title::before{content:'';width:1px;height:24px;background:rgba(255,255,255,.2);}
+    .topnav-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+    .btn-back{display:flex;align-items:center;gap:7px;padding:8px 16px;border-radius:8px;
+      background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);
+      color:rgba(255,255,255,.8);font-size:13px;font-weight:600;cursor:pointer;
+      text-decoration:none;font-family:'Nunito',sans-serif;transition:.2s;}
+    .btn-back:hover{background:rgba(255,255,255,.18);color:#fff;}
+    .avatar-sm{width:34px;height:34px;border-radius:50%;background:var(--primary);
+      border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;
+      justify-content:center;color:#fff;font-weight:700;font-size:13px;overflow:hidden;}
+
+    /* MAIN */
+    .main{padding-top:64px;min-height:100vh;}
+    .page-header{background:#fff;border-bottom:1px solid var(--border);padding:20px 32px;
+      display:flex;align-items:center;justify-content:space-between;}
+    .page-header h1{font-size:22px;font-weight:800;display:flex;align-items:center;gap:10px;}
+    .page-header h1 i{color:var(--primary);}
+    .page-header-actions{display:flex;gap:10px;}
+    .btn{padding:9px 18px;border-radius:9px;font-family:'Nunito',sans-serif;font-weight:700;
+      font-size:13px;cursor:pointer;border:none;transition:.2s;display:inline-flex;align-items:center;gap:6px;}
+    .btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--text-light);}
+    .btn-outline:hover{border-color:var(--primary);color:var(--primary);}
+    .unread-badge{background:var(--danger);color:#fff;padding:3px 9px;border-radius:50px;
+      font-size:12px;font-weight:700;margin-left:8px;}
+
+    .content{display:flex;gap:24px;padding:28px 32px;max-width:1200px;margin:0 auto;}
+
+    /* LEFT – notification list */
+    .notif-panel{flex:1;min-width:0;}
+    .filter-bar{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+    .filter-btn{padding:7px 16px;border-radius:50px;font-size:13px;font-weight:700;
+      cursor:pointer;border:1.5px solid var(--border);background:#fff;color:var(--text-light);
+      font-family:'Nunito',sans-serif;transition:.2s;}
+    .filter-btn:hover{border-color:var(--primary);color:var(--primary);}
+    .filter-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+
+    .notif-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--radius);
+      padding:18px 20px;margin-bottom:12px;cursor:pointer;transition:.2s;display:flex;gap:16px;
+      position:relative;}
+    .notif-card:hover{box-shadow:var(--shadow);border-color:var(--primary-light);}
+    .notif-card.unread{background:#FFF8F4;border-left:4px solid var(--primary);}
+    .notif-card.selected{border-color:var(--primary);box-shadow:0 0 0 3px rgba(232,98,42,.12);}
+    .notif-card-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;
+      justify-content:center;font-size:20px;flex-shrink:0;}
+    .notif-card-icon.bill   {background:rgba(100,149,237,.12);color:#6495ED;}
+    .notif-card-icon.maint  {background:rgba(232,98,42,.12);color:var(--primary);}
+    .notif-card-icon.system {background:rgba(45,138,78,.12);color:var(--success);}
+    .notif-card-icon.overdue{background:rgba(192,57,43,.12);color:var(--danger);}
+    .notif-card-icon.rental {background:rgba(100,149,237,.15);color:#5b8dee;}
+    .notif-card-body{flex:1;min-width:0;}
+    .notif-card-title{font-size:15px;font-weight:700;margin-bottom:4px;color:var(--text);}
+    .notif-card-msg{font-size:13px;color:var(--text-light);line-height:1.5;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .notif-card-time{font-size:12px;color:var(--text-light);margin-top:6px;
+      display:flex;align-items:center;gap:5px;}
+    .unread-dot{width:10px;height:10px;border-radius:50%;background:var(--primary);
+      flex-shrink:0;margin-top:4px;}
+    .notif-empty-state{text-align:center;padding:64px 32px;color:var(--text-light);}
+    .notif-empty-state i{font-size:52px;margin-bottom:16px;display:block;opacity:.35;}
+    .notif-empty-state p{font-size:15px;}
+
+    /* RIGHT – detail panel */
+    .detail-panel{width:400px;flex-shrink:0;}
+    .detail-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--radius);
+      position:sticky;top:88px;overflow:hidden;}
+    .detail-empty{padding:48px 24px;text-align:center;color:var(--text-light);}
+    .detail-empty i{font-size:40px;margin-bottom:12px;display:block;opacity:.3;}
+    .detail-header{padding:22px 24px 16px;border-bottom:1px solid var(--border);}
+    .detail-icon-row{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+    .detail-icon{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;
+      justify-content:center;font-size:24px;flex-shrink:0;}
+    .detail-icon.bill   {background:rgba(100,149,237,.12);color:#6495ED;}
+    .detail-icon.maint  {background:rgba(232,98,42,.12);color:var(--primary);}
+    .detail-icon.system {background:rgba(45,138,78,.12);color:var(--success);}
+    .detail-icon.overdue{background:rgba(192,57,43,.12);color:var(--danger);}
+    .detail-icon.rental {background:rgba(100,149,237,.15);color:#5b8dee;}
+    .detail-type-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:50px;
+      background:var(--bg);color:var(--text-light);text-transform:uppercase;letter-spacing:.5px;}
+    .detail-title{font-size:20px;font-weight:800;color:var(--text);line-height:1.3;}
+    .detail-body{padding:20px 24px;}
+    .detail-message{font-size:15px;line-height:1.75;color:var(--text);white-space:pre-wrap;word-break:break-word;}
+    .detail-meta{margin-top:18px;padding-top:16px;border-top:1px solid var(--border);
+      display:flex;flex-direction:column;gap:8px;}
+    .detail-meta-row{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-light);}
+    .detail-meta-row i{width:16px;text-align:center;}
+    .detail-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:8px;}
+    .btn-primary{background:var(--primary);color:#fff;}
+    .btn-primary:hover{background:var(--primary-dark);}
+
+    /* Loading / spinner */
+    .spinner{display:inline-block;width:26px;height:26px;border:3px solid var(--border);
+      border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .loading-state{text-align:center;padding:48px;color:var(--text-light);}
+
+    /* Toast */
+    .toast{position:fixed;bottom:24px;right:24px;z-index:999;max-width:340px;background:#fff;
+      border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.15);padding:14px 18px;
+      display:none;align-items:center;gap:12px;border-left:4px solid var(--success);}
+    .toast.show{display:flex;animation:slideIn .3s ease;}
+    @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:none;opacity:1}}
+
+    @media(max-width:860px){
+      .content{flex-direction:column;}
+      .detail-panel{width:100%;}
+      .detail-card{position:static;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="topnav">
+  <a href="/dashboard" class="topnav-logo">
+    <div class="logo-icon"><i class="fa-solid fa-house-chimney"></i></div>
+    <span class="logo-text">Rental<span>MS</span></span>
+  </a>
+  <span class="topnav-title"><i class="fa-solid fa-bell"></i> Thông báo</span>
+  <div class="topnav-right">
+    <a href="/dashboard" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Quay lại Dashboard</a>
+    <div class="avatar-sm" id="navAvatar">?</div>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="main">
+  <div class="page-header">
+    <h1><i class="fa-solid fa-bell"></i> Tất cả thông báo
+      <span class="unread-badge" id="unreadBadge" style="display:none"></span>
+    </h1>
+    <div class="page-header-actions">
+      <button class="btn btn-outline" onclick="markAllRead()">
+        <i class="fa-solid fa-check-double"></i> Đánh dấu tất cả đã đọc
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- LIST -->
+    <div class="notif-panel">
+      <div class="filter-bar">
+        <button class="filter-btn active" data-filter="all" onclick="applyFilter('all',this)">Tất cả</button>
+        <button class="filter-btn" data-filter="unread" onclick="applyFilter('unread',this)">Chưa đọc</button>
+        <button class="filter-btn" data-filter="BILL_ISSUED,BILL_DUE_SOON,BILL_OVERDUE,BILL_PAID" onclick="applyFilter('BILL_ISSUED,BILL_DUE_SOON,BILL_OVERDUE,BILL_PAID',this)"><i class="fa-solid fa-file-invoice-dollar"></i> Hóa đơn</button>
+        <button class="filter-btn" data-filter="MAINTENANCE_SUBMITTED,MAINTENANCE_STATUS_UPDATED" onclick="applyFilter('MAINTENANCE_SUBMITTED,MAINTENANCE_STATUS_UPDATED',this)"><i class="fa-solid fa-screwdriver-wrench"></i> Bảo trì</button>
+        <button class="filter-btn" data-filter="RENTAL_REQUEST_SUBMITTED,RENTAL_REQUEST_APPROVED,RENTAL_REQUEST_REJECTED" onclick="applyFilter('RENTAL_REQUEST_SUBMITTED,RENTAL_REQUEST_APPROVED,RENTAL_REQUEST_REJECTED',this)"><i class="fa-solid fa-inbox"></i> Yêu cầu thuê</button>
+        <button class="filter-btn" data-filter="SYSTEM_ANNOUNCEMENT" onclick="applyFilter('SYSTEM_ANNOUNCEMENT',this)"><i class="fa-solid fa-bullhorn"></i> Hệ thống</button>
+      </div>
+      <div id="notifList">
+        <div class="loading-state"><span class="spinner"></span></div>
+      </div>
+    </div>
+
+    <!-- DETAIL -->
+    <div class="detail-panel">
+      <div class="detail-card" id="detailCard">
+        <div class="detail-empty">
+          <i class="fa-regular fa-bell"></i>
+          <p>Chọn một thông báo<br>để xem nội dung đầy đủ</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"><span id="toastMsg"></span></div>
+
+<script>
+const API = '';
+const token = localStorage.getItem('token');
+const userData = JSON.parse(localStorage.getItem('user') || '{}');
+
+if(!token){ location.href = '/login'; }
+
+const roleLabel = {ADMIN:'Quản trị viên',OWNER:'Chủ trọ',MANAGER:'Quản lý',TENANT:'Người thuê'};
+const roleBadge = {ADMIN:'badge-admin',OWNER:'badge-owner',MANAGER:'badge-manager',TENANT:'badge-tenant'};
+
+const typeIcon = {
+  BILL_ISSUED:               {cls:'bill',   icon:'fa-file-invoice-dollar', label:'Hóa đơn'},
+  BILL_DUE_SOON:             {cls:'bill',   icon:'fa-clock',               label:'Sắp đến hạn'},
+  BILL_OVERDUE:              {cls:'overdue',icon:'fa-triangle-exclamation', label:'Quá hạn'},
+  BILL_PAID:                 {cls:'system', icon:'fa-circle-check',         label:'Đã thanh toán'},
+  MAINTENANCE_SUBMITTED:     {cls:'maint',  icon:'fa-screwdriver-wrench',   label:'Bảo trì'},
+  MAINTENANCE_STATUS_UPDATED:{cls:'maint',  icon:'fa-wrench',               label:'Bảo trì'},
+  RENTAL_REQUEST_SUBMITTED:  {cls:'rental', icon:'fa-inbox',                label:'Yêu cầu thuê'},
+  RENTAL_REQUEST_APPROVED:   {cls:'system', icon:'fa-circle-check',         label:'Yêu cầu thuê'},
+  RENTAL_REQUEST_REJECTED:   {cls:'overdue',icon:'fa-circle-xmark',         label:'Yêu cầu thuê'},
+  SYSTEM_ANNOUNCEMENT:       {cls:'system', icon:'fa-bullhorn',             label:'Hệ thống'},
+};
+
+function cfg(type){ return typeIcon[type] || {cls:'system', icon:'fa-info-circle', label:'Thông báo'}; }
+
+let allNotifs = [];
+let currentFilter = 'all';
+let selectedId = null;
+
+function fmtTimeAgo(ts){
+  const diff = (Date.now() - new Date(ts)) / 1000;
+  if(diff < 60) return 'Vừa xong';
+  if(diff < 3600) return Math.floor(diff/60) + ' phút trước';
+  if(diff < 86400) return Math.floor(diff/3600) + ' giờ trước';
+  if(diff < 604800) return Math.floor(diff/86400) + ' ngày trước';
+  return new Date(ts).toLocaleDateString('vi-VN');
+}
+
+function fmtDateTime(ts){
+  return new Date(ts).toLocaleString('vi-VN',{dateStyle:'full',timeStyle:'short'});
+}
+
+function showToast(msg){ const t=document.getElementById('toast'); document.getElementById('toastMsg').textContent=msg; t.className='toast show'; setTimeout(()=>t.className='toast',3000); }
+
+async function apiFetch(path, opts={}){
+  return fetch(API+path, { headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'}, ...opts });
+}
+
+// Init
+(async function(){
+  const name = userData.fullName || userData.email || 'User';
+  document.getElementById('navAvatar').textContent = name[0].toUpperCase();
+  await loadNotifs();
+  // Auto-select from URL hash
+  const hash = location.hash.replace('#notif-','');
+  if(hash && !isNaN(hash)){
+    const found = allNotifs.find(n=>n.id==hash);
+    if(found) selectNotif(found);
+  }
+})();
+
+async function loadNotifs(){
+  try {
+    const res = await apiFetch('/api/notifications');
+    if(!res.ok) return;
+    const data = await res.json();
+    allNotifs = data.data || [];
+    renderList();
+    updateUnreadBadge();
+  } catch(e){
+    document.getElementById('notifList').innerHTML = '<div class="loading-state">Lỗi tải thông báo</div>';
+  }
+}
+
+function updateUnreadBadge(){
+  const count = allNotifs.filter(n=>!n.read).length;
+  const el = document.getElementById('unreadBadge');
+  if(count > 0){ el.textContent = count; el.style.display='inline'; }
+  else { el.style.display='none'; }
+}
+
+function applyFilter(filter, btn){
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderList();
+}
+
+function renderList(){
+  const types = currentFilter === 'all' ? null
+    : currentFilter === 'unread' ? null
+    : currentFilter.split(',');
+
+  let list = allNotifs;
+  if(currentFilter === 'unread') list = list.filter(n=>!n.read);
+  else if(types) list = list.filter(n=>types.includes(n.type));
+
+  const el = document.getElementById('notifList');
+  if(!list.length){
+    el.innerHTML = `<div class="notif-empty-state"><i class="fa-regular fa-bell-slash"></i><p>Không có thông báo nào</p></div>`;
+    return;
+  }
+  el.innerHTML = list.map(n => {
+    const c = cfg(n.type);
+    const sel = n.id === selectedId ? 'selected' : '';
+    return `<div class="notif-card ${n.read?'':' unread'} ${sel}" onclick="selectNotif(${JSON.stringify(n).replace(/"/g,'&quot;')})">
+      <div class="notif-card-icon ${c.cls}"><i class="fa-solid ${c.icon}"></i></div>
+      <div class="notif-card-body">
+        <div class="notif-card-title">${n.title}</div>
+        <div class="notif-card-msg">${n.message}</div>
+        <div class="notif-card-time"><i class="fa-regular fa-clock"></i>${fmtTimeAgo(n.createdAt)}</div>
+      </div>
+      ${!n.read ? '<div class="unread-dot"></div>' : ''}
+    </div>`;
+  }).join('');
+}
+
+async function selectNotif(n){
+  selectedId = n.id;
+  // Mark read
+  if(!n.read){
+    n.read = true;
+    await apiFetch('/api/notifications/'+n.id+'/read', {method:'PATCH'});
+    updateUnreadBadge();
+    renderList();
+  } else {
+    renderList();
+  }
+  // Update URL
+  history.replaceState(null,'','#notif-'+n.id);
+  // Show detail
+  showDetail(n);
+}
+
+function showDetail(n){
+  const c = cfg(n.type);
+  document.getElementById('detailCard').innerHTML = `
+    <div class="detail-header">
+      <div class="detail-icon-row">
+        <div class="detail-icon ${c.cls}"><i class="fa-solid ${c.icon}"></i></div>
+        <span class="detail-type-badge">${c.label}</span>
+      </div>
+      <div class="detail-title">${n.title}</div>
+    </div>
+    <div class="detail-body">
+      <div class="detail-message">${n.message}</div>
+      <div class="detail-meta">
+        <div class="detail-meta-row"><i class="fa-regular fa-clock"></i>${fmtDateTime(n.createdAt)}</div>
+        <div class="detail-meta-row"><i class="fa-solid fa-circle${n.read?' fa-circle-check" style="color:var(--success)':'" style="color:var(--text-light)'}"></i>${n.read ? 'Đã đọc' : 'Chưa đọc'}</div>
+      </div>
+    </div>
+    <div class="detail-footer">
+      <a href="/dashboard" class="btn btn-primary" style="text-decoration:none">
+        <i class="fa-solid fa-arrow-left"></i> Quay lại Dashboard
+      </a>
+    </div>`;
+}
+
+async function markAllRead(){
+  await apiFetch('/api/notifications/read-all', {method:'PATCH'});
+  allNotifs.forEach(n=>n.read=true);
+  renderList();
+  updateUnreadBadge();
+  showToast('Đã đánh dấu tất cả thông báo là đã đọc');
+}
+</script>
+<footer style="background:#2C1810;color:#D4B09A;padding:24px 5%;text-align:center;font-size:12px;line-height:1.8;">
+  <strong style="color:#fff;">Thành viên nhóm:</strong><br>
+  Thái Thiên Thuận — 2280603159 — thuankapa989@gmail.com<br>
+  Vũ Mạnh Cường — 2280600364<br>
+  Trần Văn Quyến — 2280602687 — quyentrannn1810@gmail.com<br>
+  <span style="white-space:nowrap">Phan Trung Hiếu — 2280619060 — trunghieuphan.31102002@gmail.com</span><br>
+  <strong style="color:#fff;">GVHD:</strong> Thầy Trịnh Đồng Thạch Trúc
+</footer>
+</body>
+</html>

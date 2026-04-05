@@ -1,0 +1,130 @@
+/* Design tokens extracted from static HTML (home, dashboard, login, register, rentalms, notifications) */
+
+:root {
+  /* Colors — marketing / home (green) */
+  --color-primary: #22c55e;
+  --color-primary-dark: #16a34a;
+  --color-primary-light: #4ade80;
+  --color-primary-muted: #86efac;
+
+  /* Dashboard accent (orange) + shell */
+  --color-secondary: #e8622a;
+  --color-secondary-dark: #c94e1a;
+  --color-secondary-light: #f08050;
+
+  --color-navy: #1b2b4b;
+  --color-navy-mid: #2d4a7a;
+
+  /* Auth / cream surfaces */
+  --color-cream: #f2c185;
+  --color-auth-bg: #fdf6ed;
+  --color-auth-surface: #fffaf4;
+  --color-auth-text: #3d2314;
+  --color-auth-muted: #7d5b44;
+  --color-auth-border: #edd8c0;
+  --color-auth-primary: #d4845a;
+  --color-auth-primary-dark: #b5673e;
+
+  --color-surface: #ffffff;
+  --color-page-bg: #f0f4f8;
+  --color-page-bg-green: #f0fdf4;
+
+  --color-text-primary: #1b2b4b;
+  --color-text-secondary: #5a6a82;
+  --color-text-muted: #94a3b8;
+
+  --color-border: #dde3ec;
+  --color-border-light: #e5e7eb;
+
+  --color-success: #2d8a4e;
+  --color-warning: #e8a82a;
+  --color-danger: #c0392b;
+
+  --color-orange-listing: #f97316;
+  --color-orange-listing-bg: #fff7ed;
+
+  /* Typography */
+  --font-display: "Playfair Display", ui-serif, Georgia, serif;
+  --font-body: "Nunito", ui-sans-serif, system-ui, sans-serif;
+
+  /* Spacing scale (reference) */
+  --space-section: 1.75rem;
+  --sidebar-width: 260px;
+
+  /* Radius */
+  --radius-card: 14px;
+  --radius-card-lg: 20px;
+  --radius-btn: 10px;
+  --radius-pill: 9999px;
+
+  /* Shadows */
+  --shadow-card: 0 4px 20px rgba(27, 43, 75, 0.1);
+  --shadow-card-hover: 0 8px 32px rgba(27, 43, 75, 0.14);
+  --shadow-btn: 0 4px 15px rgba(34, 197, 94, 0.35);
+  --shadow-soft: 0 10px 35px rgba(27, 43, 75, 0.08);
+}
+
+/* Global motion tokens */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20%,
+  60% {
+    transform: translateX(-6px);
+  }
+  40%,
+  80% {
+    transform: translateX(6px);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out both;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.2s ease-out both;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.28s ease-out both;
+}
+
+.animate-shake {
+  animation: shake 0.45s ease-in-out both;
+}

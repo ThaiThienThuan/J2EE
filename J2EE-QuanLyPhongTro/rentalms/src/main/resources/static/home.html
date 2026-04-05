@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%23E8622A%27/%3E%3Cpath d=%27M16 7l-9 8h3v9h5v-5h2v5h5V15h3z%27 fill=%27white%27/%3E%3C/svg%3E">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TroTot - Tìm phòng trọ ưng ý</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    :root {
+      --primary: #22C55E;
+      --primary-light: #4ADE80;
+      --primary-dark: #16A34A;
+      --secondary: #86EFAC;
+      --bg: #F0FDF4;
+      --bg-card: #FFFFFF;
+      --bg-dark: #052E16;
+      --text: #14532D;
+      --text-light: #166534;
+      --border: #BBF7D0;
+      --success: #10B981;
+      --glass: rgba(255,255,255,0.15);
+      --glass-border: rgba(255,255,255,0.3);
+      --shadow: 0 4px 24px rgba(20,83,45,0.12);
+      --shadow-hover: 0 16px 48px rgba(20,83,45,0.22);
+      --radius: 20px;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { font-family:'Nunito',sans-serif; background:var(--bg); color:var(--text); overflow-x:hidden; }
+
+    /* ── CANVAS PARTICLES ── */
+    #particles { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+
+    /* ── NAV ── */
+    nav {
+      position:fixed; top:0; left:0; right:0; z-index:200;
+      background:#ffffff; backdrop-filter:none;
+      border-bottom:1px solid rgba(187,247,208,0.8);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 5%; height:68px;
+      transition: box-shadow .3s;
+    }
+    nav.scrolled { box-shadow:0 4px 30px rgba(20,83,45,0.12); }
+    .logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+    .logo-icon {
+      width:42px; height:42px; border-radius:14px;
+      background:linear-gradient(135deg,#22C55E,#16A34A);
+      display:flex; align-items:center; justify-content:center;
+      color:#fff; font-size:18px;
+      box-shadow:0 4px 15px rgba(34,197,94,0.4);
+      transition:transform .3s;
+    }
+    .logo:hover .logo-icon { transform:rotate(-10deg) scale(1.1); }
+    .logo-text { font-family:'Playfair Display',serif; font-size:22px; color:var(--text); font-weight:700; }
+    .logo-text span { color:var(--primary); }
+    .nav-links { display:flex; align-items:center; gap:32px; }
+    .nav-links a {
+      text-decoration:none; color:var(--text-light); font-weight:600; font-size:15px;
+      transition:.2s; position:relative; padding-bottom:4px;
+    }
+    .nav-links a::after {
+      content:''; position:absolute; bottom:0; left:0; right:0; height:2px;
+      background:var(--primary); border-radius:2px;
+      transform:scaleX(0); transition:transform .25s;
+    }
+    .nav-links a:hover { color:var(--primary); }
+    .nav-links a:hover::after { transform:scaleX(1); }
+    .nav-btns { display:flex; gap:12px; }
+    .btn {
+      padding:10px 22px; border-radius:12px; font-family:'Nunito',sans-serif; font-weight:700;
+      font-size:14px; cursor:pointer; border:none; transition:.25s;
+      text-decoration:none; display:inline-flex; align-items:center; gap:6px; position:relative; overflow:hidden;
+    }
+    .btn::after {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(135deg,rgba(255,255,255,0.2),transparent);
+      opacity:0; transition:.25s;
+    }
+    .btn:hover::after { opacity:1; }
+    .btn-outline { background:transparent; border:2px solid var(--primary); color:var(--primary); }
+    .btn-outline:hover { background:var(--primary); color:#fff; transform:translateY(-2px); }
+    .btn-primary {
+      background:linear-gradient(135deg,#22C55E,#16A34A); color:#fff;
+      box-shadow:0 4px 15px rgba(34,197,94,0.35);
+    }
+    .btn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 25px rgba(34,197,94,0.5); }
+
+    /* ── HERO ── */
+    .hero {
+      margin-top:68px; padding:90px 5% 70px;
+      background:linear-gradient(135deg,rgba(5,46,22,0.38) 0%,rgba(22,163,74,0.28) 100%), url('hinh-anh-nha-dep-1.jpg') center/cover no-repeat;
+      display:flex; align-items:center; gap:60px; min-height:calc(100vh - 68px);
+      position:relative; overflow:hidden;
+    }
+    .hero-blob {
+      position:absolute; border-radius:50%; filter:blur(80px); pointer-events:none; animation:blobMove 8s ease-in-out infinite;
+    }
+    .hero-blob-1 { width:600px; height:600px; background:rgba(34,197,94,0.25); top:-100px; right:-100px; animation-delay:0s; }
+    .hero-blob-2 { width:400px; height:400px; background:rgba(134,239,172,0.2); bottom:-80px; left:5%; animation-delay:-3s; }
+    .hero-blob-3 { width:300px; height:300px; background:rgba(22,163,74,0.3); top:30%; left:30%; animation-delay:-6s; }
+    @keyframes blobMove {
+      0%,100% { transform:translate(0,0) scale(1); }
+      33% { transform:translate(30px,-20px) scale(1.05); }
+      66% { transform:translate(-20px,15px) scale(0.97); }
+    }
+    .hero-content { flex:1; max-width:580px; position:relative; z-index:1; }
+    .hero-badge {
+      display:inline-flex; align-items:center; gap:8px;
+      background:#ffffff; border:none;
+      backdrop-filter:none;
+      padding:8px 18px; border-radius:50px; font-size:13px; font-weight:700;
+      color:#16A34A; margin-bottom:28px;
+      box-shadow:0 4px 16px rgba(0,0,0,0.18);
+      animation:fadeInUp .8s ease forwards;
+    }
+    .badge-dot { width:8px; height:8px; background:#10B981; border-radius:50%; animation:pulse 1.5s ease infinite; }
+    @keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:.7} }
+    .hero h1 {
+      font-family:'Playfair Display',serif; font-size:56px; line-height:1.15;
+      margin-bottom:24px; color:#fff;
+      text-shadow:0 2px 12px rgba(0,0,0,0.45);
+      animation:fadeInUp .8s .15s ease both;
+    }
+    .hero h1 .gradient-text {
+      background:linear-gradient(90deg,#86EFAC,#4ADE80,#fff);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      background-clip:text;
+      filter:drop-shadow(0 2px 6px rgba(0,0,0,0.3));
+    }
+    .hero p {
+      font-size:17px; color:#fff; line-height:1.8; font-weight:600;
+      text-shadow:0 1px 8px rgba(0,0,0,0.5);
+      margin-bottom:36px; animation:fadeInUp .8s .3s ease both;
+    }
+    .search-box {
+      background:#ffffff; border-radius:16px; padding:8px;
+      display:flex; align-items:center; gap:8px;
+      border:1px solid rgba(0,0,0,0.08); backdrop-filter:none;
+      box-shadow:0 4px 20px rgba(0,0,0,0.15);
+      animation:fadeInUp .8s .45s ease both;
+      transition:.3s;
+    }
+    .search-box:focus-within { border-color:var(--primary); box-shadow:0 4px 24px rgba(22,163,74,0.2); }
+    .search-box input {
+      flex:1; border:none; outline:none; padding:10px 16px;
+      font-family:'Nunito',sans-serif; font-size:15px;
+      background:transparent; color:#1a1a1a;
+    }
+    .search-box input::placeholder { color:#9ca3af; }
+    .hero-stats {
+      display:flex; gap:0; margin-top:36px;
+      background:#fff; border-radius:16px;
+      box-shadow:0 8px 32px rgba(0,0,0,0.18);
+      overflow:hidden; width:fit-content;
+      animation:fadeInUp .8s .6s ease both;
+    }
+    .stat { text-align:center; padding:16px 28px; }
+    .stat-num { font-size:28px; font-weight:800; color:#16A34A; }
+    .stat-label { font-size:11px; color:#6b7280; font-weight:600; margin-top:2px; text-transform:uppercase; letter-spacing:.4px; }
+    .stat-divider { width:1px; background:#e5e7eb; margin:12px 0; }
+
+    /* HERO 3D CARD */
+    .hero-image { flex:1; display:flex; justify-content:center; position:relative; z-index:1; }
+    .hero-card-scene { perspective:1000px; }
+    .hero-card-wrap {
+      position:relative; transform-style:preserve-3d;
+      transition:transform .1s ease; will-change:transform;
+    }
+    .hero-main-card {
+      width:360px; background:#ffffff;
+      border:1px solid rgba(0,0,0,0.08);
+      border-radius:28px; overflow:hidden;
+      backdrop-filter:none;
+      box-shadow:0 25px 60px rgba(0,0,0,0.25);
+      animation:floatCard 6s ease-in-out infinite;
+    }
+    @keyframes floatCard { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-16px)} }
+    .hero-card-img {
+      height:200px;
+      background:url('hinh-anh-nha-dep-1.jpg') center/cover no-repeat;
+      display:flex; align-items:center; justify-content:center; font-size:72px;
+      position:relative; overflow:hidden;
+    }
+    .hero-card-img::before {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(to bottom,rgba(0,0,0,0.05),rgba(0,0,0,0.3));
+    }
+    .card-shine {
+      position:absolute; top:-50%; left:-50%; width:60%; height:200%;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);
+      transform:rotate(25deg); animation:shine 4s ease-in-out infinite;
+    }
+    @keyframes shine { 0%{left:-50%} 50%,100%{left:130%} }
+    .hero-card-body { padding:22px; }
+    .hero-card-body h3 { font-size:17px; font-weight:700; margin-bottom:4px; color:#1a1a1a; }
+    .hero-card-body p { font-size:13px; color:#6b7280; margin-bottom:14px; }
+    .hero-card-price { font-size:22px; font-weight:800; color:#16A34A; }
+    .hero-card-price span { font-size:13px; font-weight:500; color:#9ca3af; }
+    .float-badge {
+      position:absolute; background:rgba(255,255,255,0.95);
+      border-radius:16px; padding:12px 16px;
+      box-shadow:0 8px 32px rgba(20,83,45,0.2);
+      display:flex; align-items:center; gap:10px;
+      backdrop-filter:blur(10px);
+    }
+    .float-badge-1 { bottom:-10px; left:-50px; animation:floatBadge1 5s ease-in-out infinite; }
+    .float-badge-2 { top:20px; right:-50px; animation:floatBadge2 5s ease-in-out infinite; }
+    @keyframes floatBadge1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-6px,8px)} }
+    @keyframes floatBadge2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(6px,-8px)} }
+    .float-icon { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:16px; }
+    .float-icon.green { background:linear-gradient(135deg,#D1FAE5,#A7F3D0); color:#059669; }
+    .float-icon.blue { background:linear-gradient(135deg,#DCFCE7,#BBF7D0); color:#16A34A; }
+    .float-text { font-size:12px; color:#374151; }
+    .float-text strong { display:block; font-size:14px; font-weight:700; color:#111827; }
+
+    /* ── WAVE DIVIDER ── */
+    .wave { line-height:0; overflow:hidden; }
+    .wave svg { display:block; width:100%; }
+
+    /* ── FEATURES ── */
+    .features { padding:80px 5% 60px; background:#fff; position:relative; }
+    .section-header { text-align:center; margin-bottom:56px; }
+    .section-tag {
+      display:inline-block; background:linear-gradient(135deg,rgba(34,197,94,0.1),rgba(22,163,74,0.15));
+      color:var(--primary); padding:6px 18px; border-radius:50px;
+      font-size:13px; font-weight:700; margin-bottom:14px;
+      border:1px solid rgba(34,197,94,0.2);
+    }
+    .section-header h2 { font-family:'Playfair Display',serif; font-size:40px; margin-bottom:12px; }
+    .section-header p { font-size:16px; color:var(--text-light); max-width:500px; margin:0 auto; }
+    .features-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:28px; max-width:1100px; margin:0 auto; }
+    .feature-card {
+      padding:36px 28px; background:linear-gradient(145deg,#fff,#F7FFF9);
+      border-radius:var(--radius); border:1px solid rgba(191,219,254,0.6);
+      transition:.35s; text-align:center; cursor:default;
+      transform-style:preserve-3d; position:relative; overflow:hidden;
+    }
+    .feature-card::before {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(135deg,rgba(34,197,94,0.05),transparent);
+      opacity:0; transition:.35s;
+    }
+    .feature-card:hover { transform:translateY(-10px) rotateX(3deg); box-shadow:var(--shadow-hover); border-color:var(--primary-light); }
+    .feature-card:hover::before { opacity:1; }
+    .feature-icon {
+      width:72px; height:72px; border-radius:20px;
+      background:linear-gradient(135deg,#F0FDF4,#DCFCE7);
+      display:flex; align-items:center; justify-content:center;
+      font-size:30px; margin:0 auto 20px;
+      box-shadow:0 4px 15px rgba(34,197,94,0.15);
+      transition:.35s;
+    }
+    .feature-card:hover .feature-icon { transform:translateZ(20px) scale(1.1); box-shadow:0 8px 25px rgba(34,197,94,0.25); }
+    .feature-card h3 { font-size:18px; font-weight:700; margin-bottom:10px; }
+    .feature-card p { font-size:14px; color:var(--text-light); line-height:1.7; }
+
+    /* ── ROOMS ── */
+    .rooms-section { padding:80px 5%; background:var(--bg); }
+    .rooms-filter { display:flex; gap:10px; margin-bottom:36px; flex-wrap:wrap; }
+    .filter-btn {
+      padding:9px 22px; border-radius:50px; border:1.5px solid var(--border);
+      background:#fff; font-family:'Nunito',sans-serif; font-size:14px; font-weight:600;
+      cursor:pointer; color:var(--text-light); transition:.25s;
+      box-shadow:0 2px 8px rgba(20,83,45,0.06);
+    }
+    .filter-btn.active, .filter-btn:hover {
+      background:linear-gradient(135deg,#22C55E,#16A34A);
+      border-color:transparent; color:#fff;
+      box-shadow:0 4px 15px rgba(34,197,94,0.35);
+    }
+    .rooms-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:24px; }
+    .room-card {
+      background:#fff; border-radius:var(--radius); overflow:hidden;
+      border:1px solid rgba(187,247,208,0.5); transition:.35s; cursor:pointer;
+      transform-style:preserve-3d;
+    }
+    .room-card:hover { transform:translateY(-10px) scale(1.01); box-shadow:var(--shadow-hover); border-color:var(--primary-light); }
+    .room-img {
+      height:200px; background:linear-gradient(135deg,#16A34A,#22C55E,#4ADE80);
+      display:flex; align-items:center; justify-content:center; font-size:64px;
+      position:relative; overflow:hidden;
+    }
+    .room-img::after {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(to bottom,transparent 50%,rgba(0,0,0,0.3));
+    }
+    .room-badge {
+      position:absolute; top:12px; left:12px; z-index:1;
+      background:linear-gradient(135deg,#059669,#10B981);
+      color:#fff; padding:5px 14px; border-radius:50px;
+      font-size:12px; font-weight:700;
+      box-shadow:0 2px 8px rgba(16,185,129,0.4);
+    }
+    .room-badge.occupied { background:linear-gradient(135deg,#6B7280,#9CA3AF); box-shadow:none; }
+    .room-body { padding:20px; }
+    .room-body h3 { font-size:16px; font-weight:700; margin-bottom:4px; }
+    .room-location { font-size:13px; color:var(--text-light); display:flex; align-items:center; gap:4px; margin-bottom:12px; }
+    .room-meta { display:flex; gap:16px; margin-bottom:14px; }
+    .room-meta-item { display:flex; align-items:center; gap:4px; font-size:13px; color:var(--text-light); }
+    .room-footer { display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:1px solid var(--border); }
+    .room-price { font-size:20px; font-weight:800; color:var(--primary); }
+    .room-price span { font-size:12px; font-weight:500; color:var(--text-light); }
+    .btn-sm { padding:8px 18px; border-radius:10px; font-size:13px; }
+
+    /* ── HOW IT WORKS ── */
+    .how { padding:80px 5%; background:linear-gradient(135deg,#052E16,#14532D); position:relative; overflow:hidden; }
+    .how::before {
+      content:''; position:absolute; width:600px; height:600px;
+      background:radial-gradient(circle,rgba(34,197,94,0.15),transparent 70%);
+      top:-100px; right:-100px; pointer-events:none;
+    }
+    .how .section-header h2 { color:#fff; }
+    .how .section-tag { background:rgba(255,255,255,0.1); color:#86EFAC; border-color:rgba(255,255,255,0.2); }
+    .how .section-header p { color:rgba(255,255,255,0.6); }
+    .steps { display:grid; grid-template-columns:repeat(4,1fr); gap:24px; max-width:1100px; margin:0 auto; position:relative; }
+    .steps::before {
+      content:''; position:absolute; top:40px; left:12.5%; right:12.5%; height:2px;
+      background:linear-gradient(90deg,#22C55E,#86EFAC,#22C55E);
+      background-size:200% 100%; animation:shimmer 3s linear infinite; z-index:0;
+    }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    .step { text-align:center; position:relative; z-index:1; }
+    .step-num {
+      width:80px; height:80px; border-radius:50%;
+      background:linear-gradient(135deg,#22C55E,#16A34A);
+      color:#fff; font-size:24px; font-weight:800;
+      display:flex; align-items:center; justify-content:center;
+      margin:0 auto 20px;
+      border:4px solid rgba(255,255,255,0.1);
+      box-shadow:0 0 0 0 rgba(34,197,94,0.5);
+      animation:stepPulse 2.5s ease-in-out infinite;
+      transition:transform .3s;
+    }
+    .step:hover .step-num { transform:scale(1.1) translateY(-4px); }
+    .step:nth-child(2) .step-num { animation-delay:.5s; }
+    .step:nth-child(3) .step-num { animation-delay:1s; }
+    .step:nth-child(4) .step-num { animation-delay:1.5s; }
+    @keyframes stepPulse { 0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,0.5)} 50%{box-shadow:0 0 0 14px rgba(34,197,94,0)} }
+    .step h4 { font-size:16px; font-weight:700; margin-bottom:8px; color:#fff; }
+    .step p { font-size:13px; color:rgba(255,255,255,0.6); line-height:1.7; }
+
+    /* ── CTA ── */
+    .cta-section {
+      padding:100px 5%; text-align:center; color:#fff; position:relative; overflow:hidden;
+      background:linear-gradient(135deg,#16A34A,#22C55E,#4ADE80);
+      background-size:200% 200%; animation:gradientShift 6s ease infinite;
+    }
+    @keyframes gradientShift { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+    .cta-section::before {
+      content:''; position:absolute; inset:0;
+      background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .cta-section h2 { font-family:'Playfair Display',serif; font-size:44px; margin-bottom:16px; position:relative; }
+    .cta-section p { font-size:18px; opacity:.85; margin-bottom:40px; position:relative; }
+    .btn-white { background:#fff; color:var(--primary-dark); box-shadow:0 4px 20px rgba(0,0,0,0.15); }
+    .btn-white:hover { background:#DCFCE7; transform:translateY(-3px); box-shadow:0 8px 30px rgba(0,0,0,0.2); }
+    .btn-ghost { background:rgba(255,255,255,0.15); color:#fff; border:1.5px solid rgba(255,255,255,0.4); backdrop-filter:blur(5px); }
+    .btn-ghost:hover { background:rgba(255,255,255,0.25); transform:translateY(-3px); }
+
+    /* ── FOOTER ── */
+    footer { background:var(--bg-dark); color:#86EFAC; padding:60px 5% 30px; }
+    .footer-grid { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:40px; margin-bottom:40px; }
+    .footer-brand p { font-size:14px; line-height:1.7; margin-top:12px; opacity:.65; }
+    footer h4 { color:#fff; font-size:15px; margin-bottom:16px; }
+    footer ul { list-style:none; }
+    footer ul li { margin-bottom:10px; }
+    footer ul li a { color:#86EFAC; text-decoration:none; font-size:14px; opacity:.65; transition:.2s; display:flex; align-items:center; gap:6px; }
+    footer ul li a:hover { opacity:1; color:#BBF7D0; padding-left:4px; }
+    .footer-bottom { border-top:1px solid rgba(255,255,255,.08); padding-top:24px; text-align:center; font-size:13px; opacity:.4; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeInUp {
+      from { opacity:0; transform:translateY(30px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .reveal { opacity:0; transform:translateY(40px); transition:opacity .7s ease, transform .7s ease; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+    .reveal-delay-1 { transition-delay:.1s; }
+    .reveal-delay-2 { transition-delay:.2s; }
+    .reveal-delay-3 { transition-delay:.3s; }
+    .reveal-delay-4 { transition-delay:.4s; }
+    .reveal-delay-5 { transition-delay:.5s; }
+
+    /* ── LOGIN TOAST ── */
+    #loginToast {
+      position:fixed; bottom:36px; left:50%; transform:translateX(-50%) translateY(120px);
+      background:#1C1C2E; color:#fff; padding:14px 28px; border-radius:14px;
+      font-size:15px; font-weight:600; z-index:99999;
+      box-shadow:0 8px 40px rgba(0,0,0,0.35);
+      transition:transform .4s cubic-bezier(.34,1.56,.64,1), opacity .4s;
+      opacity:0; white-space:nowrap;
+      display:flex; align-items:center; gap:10px;
+      pointer-events:none;
+      border:1px solid rgba(255,255,255,0.1);
+    }
+    #loginToast.show {
+      opacity:1; transform:translateX(-50%) translateY(0);
+    }
+    #loginToast i { color:#4ADE80; font-size:16px; }
+
+    /* ── AUTH MODAL ── */
+    #authModal {
+      position:fixed; inset:0; z-index:99998;
+      background:rgba(0,0,0,0.55); backdrop-filter:blur(6px);
+      display:flex; align-items:center; justify-content:center;
+      opacity:0; pointer-events:none;
+      transition:opacity .3s;
+    }
+    #authModal.show { opacity:1; pointer-events:all; }
+    .auth-modal-box {
+      background:#fff; border-radius:24px; padding:40px 36px 32px;
+      width:380px; max-width:90vw; text-align:center;
+      box-shadow:0 24px 80px rgba(0,0,0,0.25);
+      transform:translateY(30px) scale(0.96);
+      transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+    }
+    #authModal.show .auth-modal-box { transform:translateY(0) scale(1); }
+    .auth-modal-icon {
+      width:64px; height:64px; border-radius:20px;
+      background:linear-gradient(135deg,#22C55E,#16A34A);
+      display:flex; align-items:center; justify-content:center;
+      margin:0 auto 20px; font-size:28px; color:#fff;
+      box-shadow:0 8px 24px rgba(34,197,94,0.35);
+    }
+    .auth-modal-box h3 { font-size:20px; font-weight:800; color:#111; margin-bottom:8px; }
+    .auth-modal-box p { font-size:14px; color:#6B7280; margin-bottom:28px; line-height:1.6; }
+    .auth-modal-btns { display:flex; gap:12px; }
+    .auth-modal-btns a {
+      flex:1; padding:13px; border-radius:12px; font-family:'Nunito',sans-serif;
+      font-weight:700; font-size:15px; text-decoration:none;
+      display:flex; align-items:center; justify-content:center; gap:8px;
+      transition:.2s;
+    }
+    .auth-btn-login {
+      background:linear-gradient(135deg,#22C55E,#16A34A); color:#fff;
+      box-shadow:0 4px 15px rgba(34,197,94,0.35);
+    }
+    .auth-btn-login:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(34,197,94,0.45); }
+    .auth-btn-register {
+      border:2px solid #22C55E; color:#16A34A; background:#F0FDF4;
+    }
+    .auth-btn-register:hover { background:#DCFCE7; transform:translateY(-2px); }
+    .auth-modal-close {
+      margin-top:18px; font-size:13px; color:#9CA3AF; cursor:pointer;
+      background:none; border:none; font-family:'Nunito',sans-serif;
+    }
+    .auth-modal-close:hover { color:#6B7280; }
+
+    .loading { text-align:center; padding:60px; font-size:16px; color:var(--text-light); }
+    .spinner {
+      display:inline-block; width:36px; height:36px;
+      border:3px solid var(--border); border-top-color:var(--primary);
+      border-radius:50%; animation:spin .7s linear infinite; margin-right:8px;
+      vertical-align:middle;
+    }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .empty-state { text-align:center; padding:60px; color:var(--text-light); }
+    .empty-state .empty-icon { font-size:56px; margin-bottom:16px; }
+
+    @media(max-width:900px){
+      .hero { flex-direction:column; padding:60px 5%; text-align:center; }
+      .hero-image { display:none; }
+      .hero h1 { font-size:38px; }
+      .hero-stats { justify-content:center; }
+      .features-grid { grid-template-columns:1fr; }
+      .steps { grid-template-columns:repeat(2,1fr); }
+      .steps::before { display:none; }
+      .footer-grid { grid-template-columns:1fr 1fr; }
+      nav .nav-links { display:none; }
+    }
+  </style>
+</head>
+<body>
+<canvas id="particles"></canvas>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="/home" class="logo">
+    <div class="logo-icon"><i class="fa-solid fa-house-chimney"></i></div>
+    <span class="logo-text">Tro<span>Tot</span></span>
+  </a>
+  <div class="nav-links">
+    <a href="#rooms">Tìm phòng</a>
+    <a href="#features">Tính năng</a>
+    <a href="#how">Cách dùng</a>
+  </div>
+  <div class="nav-btns">
+    <a href="/login" class="btn btn-outline">Đăng nhập</a>
+    <a href="/register" class="btn btn-primary"><i class="fa-solid fa-user-plus"></i> Đăng ký</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-blob hero-blob-1"></div>
+  <div class="hero-blob hero-blob-2"></div>
+  <div class="hero-blob hero-blob-3"></div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      Nền tảng thuê phòng uy tín #1 Việt Nam
+    </div>
+    <h1>Tìm phòng trọ <span class="gradient-text">ưng ý</span>,<br>an tâm sinh sống</h1>
+    <p>Hàng trăm phòng trọ chất lượng, giá tốt. Kết nối trực tiếp với chủ nhà, ký hợp đồng minh bạch, thanh toán tiện lợi.</p>
+    <div class="search-box">
+      <i class="fa-solid fa-magnifying-glass" style="color:rgba(255,255,255,0.6); padding-left:8px;"></i>
+      <input type="text" id="searchInput" placeholder="Tìm theo tên tòa nhà, địa chỉ..."/>
+      <button class="btn btn-primary" onclick="searchRooms()"><i class="fa-solid fa-search"></i> Tìm kiếm</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num" id="statRooms">--</div><div class="stat-label">Phòng trống</div></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><div class="stat-num" id="statBuildings">--</div><div class="stat-label">Tòa nhà</div></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Minh bạch</div></div>
+    </div>
+  </div>
+  <div class="hero-image">
+    <div class="hero-card-scene">
+      <div class="hero-card-wrap" id="heroCard">
+        <div class="hero-main-card">
+          <div class="hero-card-img">
+            <div class="card-shine"></div>
+          </div>
+          <div class="hero-card-body">
+            <h3>Phòng Studio Hiện Đại</h3>
+            <p><i class="fa-solid fa-location-dot"></i> Quận 1, TP.HCM</p>
+            <div class="room-meta" style="color:rgba(255,255,255,0.6)">
+              <span class="room-meta-item" style="color:rgba(255,255,255,0.6)"><i class="fa-solid fa-expand"></i> 25m²</span>
+              <span class="room-meta-item" style="color:rgba(255,255,255,0.6)"><i class="fa-solid fa-bed"></i> 1 phòng ngủ</span>
+            </div>
+            <div class="hero-card-price">3.500.000<span>/tháng</span></div>
+          </div>
+        </div>
+        <div class="float-badge float-badge-1">
+          <div class="float-icon green"><i class="fa-solid fa-shield-check"></i></div>
+          <div class="float-text"><strong>Đã xác minh</strong>Chủ nhà uy tín</div>
+        </div>
+        <div class="float-badge float-badge-2">
+          <div class="float-icon blue"><i class="fa-solid fa-bolt"></i></div>
+          <div class="float-text"><strong>Phản hồi nhanh</strong>Trong 24h</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WAVE -->
+<div class="wave">
+  <svg viewBox="0 0 1440 60" preserveAspectRatio="none" style="height:60px">
+    <path d="M0,30 C360,60 1080,0 1440,30 L1440,60 L0,60 Z" fill="#ffffff"/>
+  </svg>
+</div>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="section-header reveal">
+    <div class="section-tag">✨ Tính năng nổi bật</div>
+    <h2>Quản lý phòng trọ <span style="color:var(--primary)">thông minh</span></h2>
+    <p>Giải pháp toàn diện cho cả chủ nhà và người thuê</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card reveal reveal-delay-1">
+      <div class="feature-icon">🏡</div>
+      <h3>Quản lý tòa nhà</h3>
+      <p>Dễ dàng quản lý nhiều tòa nhà, phòng trọ. Cập nhật trạng thái phòng theo thời gian thực.</p>
+    </div>
+    <div class="feature-card reveal reveal-delay-2">
+      <div class="feature-icon">📋</div>
+      <h3>Hợp đồng điện tử</h3>
+      <p>Tạo và quản lý hợp đồng thuê phòng minh bạch, lưu trữ lịch sử đầy đủ và rõ ràng.</p>
+    </div>
+    <div class="feature-card reveal reveal-delay-3">
+      <div class="feature-icon">💸</div>
+      <h3>Thanh toán tiện lợi</h3>
+      <p>Theo dõi hóa đơn điện, nước, dịch vụ. Thanh toán trực tuyến nhanh chóng, an toàn.</p>
+    </div>
+    <div class="feature-card reveal reveal-delay-1">
+      <div class="feature-icon">🔧</div>
+      <h3>Bảo trì & sửa chữa</h3>
+      <p>Gửi yêu cầu sửa chữa ngay trên ứng dụng. Theo dõi tiến độ xử lý minh bạch.</p>
+    </div>
+    <div class="feature-card reveal reveal-delay-2">
+      <div class="feature-icon">🔔</div>
+      <h3>Thông báo tự động</h3>
+      <p>Nhắc nhở hóa đơn đến hạn, hợp đồng sắp hết, yêu cầu mới cần xử lý.</p>
+    </div>
+    <div class="feature-card reveal reveal-delay-3">
+      <div class="feature-icon">📊</div>
+      <h3>Báo cáo & thống kê</h3>
+      <p>Tổng hợp doanh thu, công suất cho thuê, chi phí bảo trì một cách trực quan.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ROOMS -->
+<section class="rooms-section" id="rooms">
+  <div class="section-header reveal">
+    <div class="section-tag">🏠 Phòng trống hiện có</div>
+    <h2>Tìm phòng <span style="color:var(--primary)">phù hợp</span> với bạn</h2>
+    <p>Danh sách phòng trọ chất lượng, cập nhật liên tục</p>
+  </div>
+  <div class="rooms-filter reveal">
+    <button class="filter-btn active" onclick="filterRooms('all',this)">🏘 Tất cả</button>
+    <button class="filter-btn" onclick="filterRooms('cheap',this)">💰 Dưới 3 triệu</button>
+    <button class="filter-btn" onclick="filterRooms('mid',this)">🏠 3 – 5 triệu</button>
+    <button class="filter-btn" onclick="filterRooms('high',this)">⭐ Trên 5 triệu</button>
+  </div>
+  <div class="rooms-grid" id="roomsGrid">
+    <div class="loading"><span class="spinner"></span> Đang tải danh sách phòng...</div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="section-header reveal">
+    <div class="section-tag">🚀 Quy trình đơn giản</div>
+    <h2>Chỉ <span style="color:#86EFAC">4 bước</span> để có phòng ưng ý</h2>
+  </div>
+  <div class="steps">
+    <div class="step reveal reveal-delay-1">
+      <div class="step-num">1</div>
+      <h4>Tìm kiếm</h4>
+      <p>Duyệt danh sách phòng trống, lọc theo giá, diện tích, địa điểm</p>
+    </div>
+    <div class="step reveal reveal-delay-2">
+      <div class="step-num">2</div>
+      <h4>Liên hệ chủ nhà</h4>
+      <p>Nhận mã invite từ chủ nhà, đăng ký tài khoản và kết nối</p>
+    </div>
+    <div class="step reveal reveal-delay-3">
+      <div class="step-num">3</div>
+      <h4>Ký hợp đồng</h4>
+      <p>Hợp đồng điện tử minh bạch, rõ ràng mọi điều khoản</p>
+    </div>
+    <div class="step reveal reveal-delay-4">
+      <div class="step-num">4</div>
+      <h4>Dọn vào ở</h4>
+      <p>Quản lý hóa đơn, báo sửa chữa ngay trên ứng dụng</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section reveal">
+  <h2>Sẵn sàng tìm phòng trọ ưng ý?</h2>
+  <p>Đăng ký miễn phí ngay hôm nay và khám phá hàng trăm phòng chất lượng</p>
+  <a href="/register" class="btn btn-white" style="margin-right:12px">
+    <i class="fa-solid fa-user-plus"></i> Đăng ký ngay
+  </a>
+  <a href="/login" class="btn btn-ghost">
+    <i class="fa-solid fa-right-to-bracket"></i> Đăng nhập
+  </a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="/home" class="logo" style="margin-bottom:12px; display:inline-flex;">
+        <div class="logo-icon"><i class="fa-solid fa-house-chimney"></i></div>
+        <span class="logo-text" style="color:#fff;">Tro<span>Tot</span></span>
+      </a>
+      <p>Nền tảng quản lý phòng trọ thông minh, kết nối chủ nhà và người thuê một cách minh bạch và tiện lợi.</p>
+    </div>
+    <div>
+      <h4>Dịch vụ</h4>
+      <ul>
+        <li><a href="#rooms"><i class="fa-solid fa-search"></i> Tìm phòng trọ</a></li>
+        <li><a href="#"><i class="fa-solid fa-plus"></i> Đăng phòng cho thuê</a></li>
+        <li><a href="#"><i class="fa-solid fa-file-contract"></i> Quản lý hợp đồng</a></li>
+        <li><a href="#"><i class="fa-solid fa-credit-card"></i> Thanh toán online</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Hỗ trợ</h4>
+      <ul>
+        <li><a href="#"><i class="fa-solid fa-book"></i> Hướng dẫn sử dụng</a></li>
+        <li><a href="#"><i class="fa-solid fa-circle-question"></i> FAQ</a></li>
+        <li><a href="#"><i class="fa-solid fa-headset"></i> Liên hệ</a></li>
+        <li><a href="#"><i class="fa-solid fa-shield"></i> Chính sách</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Liên hệ</h4>
+      <ul>
+        <li><a href="#"><i class="fa-solid fa-envelope"></i> support@trotot.vn</a></li>
+        <li><a href="#"><i class="fa-solid fa-phone"></i> 1800 1234</a></li>
+        <li><a href="#"><i class="fa-brands fa-facebook"></i> Facebook</a></li>
+        <li><a href="#"><i class="fa-brands fa-zalo"></i> Zalo OA</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 TroTot. Hệ thống quản lý phòng trọ thông minh.</p>
+    <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08);font-size:12px;line-height:1.8;opacity:.75;">
+      <strong style="color:#fff;">Thành viên nhóm:</strong><br>
+      Thái Thiên Thuận — 2280603159 — thuankapa989@gmail.com<br>
+      Vũ Mạnh Cường — 2280600364<br>
+      Trần Văn Quyến — 2280602687 — quyentrannn1810@gmail.com<br>
+      <span style="white-space:nowrap">Phan Trung Hiếu — 2280619060 — trunghieuphan.31102002@gmail.com</span><br>
+      <strong style="color:#fff;">GVHD:</strong> Thầy Trịnh Đồng Thạch Trúc
+    </div>
+  </div>
+</footer>
+
+<!-- AUTH MODAL -->
+<div id="authModal">
+  <div class="auth-modal-box">
+    <div class="auth-modal-icon"><i class="fa-solid fa-lock"></i></div>
+    <h3>Bạn chưa đăng nhập</h3>
+    <p>Vui lòng đăng nhập để tiếp tục,<br/>hoặc đăng ký nếu chưa có tài khoản.</p>
+    <div class="auth-modal-btns">
+      <a href="/login" class="auth-btn-login"><i class="fa-solid fa-right-to-bracket"></i> Đăng nhập</a>
+      <a href="/register" class="auth-btn-register"><i class="fa-solid fa-user-plus"></i> Đăng ký</a>
+    </div>
+    <button class="auth-modal-close" onclick="closeAuthModal()">Để sau</button>
+  </div>
+</div>
+
+<script>
+  /* ── PARTICLES ── */
+  const canvas = document.getElementById('particles');
+  const ctx = canvas.getContext('2d');
+  let W, H, dots = [];
+  function resizeCanvas(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  resizeCanvas(); window.addEventListener('resize', resizeCanvas);
+  for(let i=0;i<60;i++) dots.push({
+    x:Math.random()*window.innerWidth, y:Math.random()*window.innerHeight,
+    r:Math.random()*2+0.5, dx:(Math.random()-.5)*0.4, dy:(Math.random()-.5)*0.4,
+    a:Math.random()*0.4+0.1
+  });
+  function drawParticles(){
+    ctx.clearRect(0,0,W,H);
+    dots.forEach(d=>{
+      ctx.beginPath(); ctx.arc(d.x,d.y,d.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(134,239,172,${d.a})`; ctx.fill();
+      d.x+=d.dx; d.y+=d.dy;
+      if(d.x<0||d.x>W) d.dx*=-1;
+      if(d.y<0||d.y>H) d.dy*=-1;
+    });
+    for(let i=0;i<dots.length;i++) for(let j=i+1;j<dots.length;j++){
+      const dx=dots[i].x-dots[j].x, dy=dots[i].y-dots[j].y;
+      const dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist<120){ ctx.beginPath(); ctx.moveTo(dots[i].x,dots[i].y); ctx.lineTo(dots[j].x,dots[j].y);
+        ctx.strokeStyle=`rgba(134,239,172,${0.15*(1-dist/120)})`; ctx.lineWidth=0.5; ctx.stroke(); }
+    }
+    requestAnimationFrame(drawParticles);
+  }
+  drawParticles();
+
+  /* ── NAV SCROLL ── */
+  window.addEventListener('scroll',()=>{
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY>20);
+  });
+
+  /* ── 3D CARD TILT ── */
+  const heroCard = document.getElementById('heroCard');
+  if(heroCard){
+    document.querySelector('.hero-card-scene').addEventListener('mousemove', e=>{
+      const rect = heroCard.getBoundingClientRect();
+      const cx = rect.left + rect.width/2, cy = rect.top + rect.height/2;
+      const rx = (e.clientY-cy)/18, ry = -(e.clientX-cx)/18;
+      heroCard.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+    });
+    document.querySelector('.hero-card-scene').addEventListener('mouseleave',()=>{
+      heroCard.style.transform = 'rotateX(0) rotateY(0)';
+    });
+  }
+
+  /* ── SCROLL REVEAL ── */
+  const observer = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+  },{ threshold:0.12 });
+  document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+  /* ── DATA ── */
+  const API = '';
+  let allRooms = [];
+  const emojis = ['🏠','🏡','🏢','🏬','🛋️','🏗️'];
+  function randEmoji(){ return emojis[Math.floor(Math.random()*emojis.length)]; }
+  function fmt(n){ return new Intl.NumberFormat('vi-VN').format(n); }
+
+  async function loadRooms(){
+    try {
+      const res = await fetch(API + '/api/marketplace');
+      const data = await res.json();
+      allRooms = data.data || [];
+      animateCount('statRooms', allRooms.length);
+      const buildings = [...new Set(allRooms.map(r=>r.buildingId))];
+      animateCount('statBuildings', buildings.length);
+      renderRooms(allRooms);
+    } catch(e) {
+      document.getElementById('roomsGrid').innerHTML =
+        `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">😔</div><p>Không thể tải danh sách phòng.</p></div>`;
+    }
+  }
+
+  function animateCount(id, target){
+    const el = document.getElementById(id);
+    let cur = 0; const step = Math.ceil(target/30);
+    const t = setInterval(()=>{ cur = Math.min(cur+step, target); el.textContent=cur; if(cur>=target) clearInterval(t); },40);
+  }
+
+  function renderRooms(rooms){
+    const grid = document.getElementById('roomsGrid');
+    if(!rooms.length){
+      grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🏚️</div><p>Không có phòng trống phù hợp</p></div>`;
+      return;
+    }
+    grid.innerHTML = rooms.map((r,i)=>`
+      <div class="room-card reveal" style="transition-delay:${i*0.08}s" onclick="window.location='/login'">
+        <div class="room-img">
+          ${r.imageUrl?`<img src="${r.imageUrl}" style="width:100%;height:100%;object-fit:cover"/>`:`<span style="position:relative;z-index:1">${randEmoji()}</span>`}
+          <div class="room-badge${r.status!=='AVAILABLE'?' occupied':''}">${r.status==='AVAILABLE'?'✓ Còn phòng':'Đã thuê'}</div>
+        </div>
+        <div class="room-body">
+          <h3>${r.roomNo?'Phòng '+r.roomNo:'Phòng trọ'}</h3>
+          <div class="room-location"><i class="fa-solid fa-location-dot" style="color:var(--primary)"></i> ${r.buildingName||r.buildingAddress||'Hồ Chí Minh'}</div>
+          <div class="room-meta">
+            ${r.area?`<span class="room-meta-item"><i class="fa-solid fa-expand"></i> ${r.area}m²</span>`:''}
+            ${r.beds?`<span class="room-meta-item"><i class="fa-solid fa-bed"></i> ${r.beds} giường</span>`:''}
+          </div>
+          ${r.amenities?`<p style="font-size:12px;color:var(--text-light);margin-bottom:8px">${r.amenities}</p>`:''}
+          <div class="room-footer">
+            <div class="room-price">${fmt(r.price)}<span>đ/tháng</span></div>
+            <button class="btn btn-primary btn-sm">Xem chi tiết</button>
+          </div>
+        </div>
+      </div>`).join('');
+    document.querySelectorAll('.room-card.reveal').forEach(el=>observer.observe(el));
+  }
+
+  function filterRooms(type,btn){
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    let f=allRooms;
+    if(type==='cheap') f=allRooms.filter(r=>r.price<3000000);
+    else if(type==='mid') f=allRooms.filter(r=>r.price>=3000000&&r.price<=5000000);
+    else if(type==='high') f=allRooms.filter(r=>r.price>5000000);
+    renderRooms(f);
+  }
+
+  function searchRooms(){
+    const q=document.getElementById('searchInput').value.toLowerCase();
+    renderRooms(allRooms.filter(r=>
+      (r.buildingName||'').toLowerCase().includes(q)||
+      (r.buildingAddress||'').toLowerCase().includes(q)||
+      (r.roomNo||'').toLowerCase().includes(q)
+    ));
+    document.getElementById('rooms').scrollIntoView({behavior:'smooth'});
+  }
+
+  /* ── REQUIRE LOGIN INTERCEPTOR ── */
+  const loginToast = document.createElement('div');
+  loginToast.id = 'loginToast';
+  loginToast.innerHTML = '<i class="fa-solid fa-lock"></i> Bạn cần đăng nhập cho hành động này';
+  document.body.appendChild(loginToast);
+  let toastTimer = null;
+  const authModal = document.getElementById('authModal');
+
+  function showAuthModal() {
+    authModal.classList.add('show');
+  }
+
+  function closeAuthModal() {
+    authModal.classList.remove('show');
+  }
+
+  // Close modal when clicking backdrop
+  authModal.addEventListener('click', function(e) {
+    if (e.target === authModal) closeAuthModal();
+  });
+
+  function requireLogin(e) {
+    if (e) { e.preventDefault(); e.stopImmediatePropagation(); }
+    // Show toast
+    clearTimeout(toastTimer);
+    loginToast.classList.add('show');
+    toastTimer = setTimeout(() => loginToast.classList.remove('show'), 2200);
+    // Show auth modal
+    showAuthModal();
+  }
+
+  // Intercept ALL clicks; allow only /login / /register links through
+  document.addEventListener('click', function(e) {
+    // Don't intercept clicks inside the auth modal itself
+    if (authModal.contains(e.target)) return;
+
+    const link = e.target.closest('a');
+    if (link) {
+      const href = (link.getAttribute('href') || '').trim();
+      if (href === '/login' || href === '/register') return; // let through
+      requireLogin(e);
+      return;
+    }
+    const btn = e.target.closest('button');
+    if (btn && !btn.classList.contains('auth-modal-close')) { requireLogin(e); }
+  }, true); // capture phase — fires before onclick attributes
+
+  document.getElementById('searchInput').addEventListener('keypress', e => {
+    if (e.key === 'Enter') requireLogin(e);
+  });
+
+  loadRooms();
+</script>
+</body>
+</html>

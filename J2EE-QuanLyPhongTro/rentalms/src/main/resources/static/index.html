@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TroTot - Tìm phòng trọ ưng ý</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    :root {
+      --primary: #D4845A;
+      --primary-light: #E8A880;
+      --primary-dark: #B5673E;
+      --secondary: #F2C185;
+      --bg: #FDF6ED;
+      --bg-card: #FFFAF4;
+      --bg-dark: #3D2314;
+      --text: #3D2314;
+      --text-light: #7D5B44;
+      --border: #EDD8C0;
+      --success: #5C8C5A;
+      --shadow: 0 4px 20px rgba(61,35,20,0.10);
+      --shadow-hover: 0 8px 32px rgba(61,35,20,0.18);
+      --radius: 16px;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Nunito',sans-serif; background:var(--bg); color:var(--text); }
+
+    /* NAV */
+    nav {
+      position:fixed; top:0; left:0; right:0; z-index:100;
+      background:rgba(253,246,237,0.95); backdrop-filter:blur(12px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 5%; height:68px;
+    }
+    .logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+    .logo-icon { width:40px; height:40px; background:var(--primary); border-radius:12px;
+      display:flex; align-items:center; justify-content:center; color:#fff; font-size:18px; }
+    .logo-text { font-family:'Playfair Display',serif; font-size:22px; color:var(--text); font-weight:700; }
+    .logo-text span { color:var(--primary); }
+    .nav-links { display:flex; align-items:center; gap:32px; }
+    .nav-links a { text-decoration:none; color:var(--text-light); font-weight:600; font-size:15px; transition:.2s; }
+    .nav-links a:hover { color:var(--primary); }
+    .nav-btns { display:flex; gap:12px; }
+    .btn { padding:10px 22px; border-radius:10px; font-family:'Nunito',sans-serif; font-weight:700;
+      font-size:14px; cursor:pointer; border:none; transition:.2s; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
+    .btn-outline { background:transparent; border:2px solid var(--primary); color:var(--primary); }
+    .btn-outline:hover { background:var(--primary); color:#fff; }
+    .btn-primary { background:var(--primary); color:#fff; }
+    .btn-primary:hover { background:var(--primary-dark); transform:translateY(-1px); box-shadow:var(--shadow); }
+
+    /* HERO */
+    .hero {
+      margin-top:68px; padding:80px 5% 60px;
+      background:linear-gradient(135deg, #FDF6ED 0%, #FAE8CC 50%, #F5D4AA 100%);
+      display:flex; align-items:center; gap:60px; min-height:calc(100vh - 68px);
+    }
+    .hero-content { flex:1; max-width:560px; }
+    .hero-badge { display:inline-flex; align-items:center; gap:8px; background:#fff; border:1.5px solid var(--border);
+      padding:6px 16px; border-radius:50px; font-size:13px; font-weight:600; color:var(--primary); margin-bottom:24px; }
+    .hero h1 { font-family:'Playfair Display',serif; font-size:52px; line-height:1.2; margin-bottom:20px; }
+    .hero h1 span { color:var(--primary); }
+    .hero p { font-size:17px; color:var(--text-light); line-height:1.7; margin-bottom:36px; }
+    .search-box {
+      background:#fff; border-radius:16px; padding:8px; display:flex; align-items:center;
+      gap:8px; box-shadow:var(--shadow); border:1.5px solid var(--border);
+    }
+    .search-box input { flex:1; border:none; outline:none; padding:10px 16px; font-family:'Nunito',sans-serif;
+      font-size:15px; background:transparent; color:var(--text); }
+    .search-box input::placeholder { color:#b0917a; }
+    .search-box .btn-primary { padding:12px 24px; border-radius:10px; }
+    .hero-stats { display:flex; gap:32px; margin-top:32px; }
+    .stat { text-align:center; }
+    .stat-num { font-size:28px; font-weight:800; color:var(--primary); }
+    .stat-label { font-size:13px; color:var(--text-light); font-weight:600; }
+    .hero-image { flex:1; display:flex; justify-content:center; }
+    .hero-card-wrap { position:relative; }
+    .hero-main-card {
+      width:380px; background:var(--bg-card); border-radius:24px;
+      box-shadow:0 20px 60px rgba(61,35,20,0.20); overflow:hidden;
+    }
+    .hero-card-img { height:220px; background:linear-gradient(135deg, #E8A880, #D4845A);
+      display:flex; align-items:center; justify-content:center; font-size:80px; }
+    .hero-card-body { padding:24px; }
+    .hero-card-body h3 { font-size:18px; font-weight:700; margin-bottom:4px; }
+    .hero-card-body p { font-size:13px; color:var(--text-light); margin-bottom:12px; }
+    .hero-card-price { font-size:22px; font-weight:800; color:var(--primary); }
+    .hero-card-price span { font-size:13px; font-weight:500; color:var(--text-light); }
+    .float-badge {
+      position:absolute; background:#fff; border-radius:14px; padding:12px 16px;
+      box-shadow:var(--shadow-hover); display:flex; align-items:center; gap:10px;
+    }
+    .float-badge-1 { bottom:-20px; left:-40px; }
+    .float-badge-2 { top:30px; right:-40px; }
+    .float-icon { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:16px; }
+    .float-icon.green { background:#E8F5E9; color:#5C8C5A; }
+    .float-icon.orange { background:#FFF3E0; color:var(--primary); }
+    .float-text { font-size:12px; }
+    .float-text strong { display:block; font-size:14px; font-weight:700; }
+
+    /* FEATURES */
+    .features { padding:80px 5%; background:#fff; }
+    .section-header { text-align:center; margin-bottom:56px; }
+    .section-tag { display:inline-block; background:rgba(212,132,90,0.12); color:var(--primary);
+      padding:6px 16px; border-radius:50px; font-size:13px; font-weight:700; margin-bottom:12px; }
+    .section-header h2 { font-family:'Playfair Display',serif; font-size:38px; margin-bottom:12px; }
+    .section-header p { font-size:16px; color:var(--text-light); max-width:500px; margin:0 auto; }
+    .features-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:28px; max-width:1100px; margin:0 auto; }
+    .feature-card {
+      padding:36px 28px; background:var(--bg-card); border-radius:var(--radius);
+      border:1.5px solid var(--border); transition:.3s; text-align:center;
+    }
+    .feature-card:hover { transform:translateY(-6px); box-shadow:var(--shadow-hover); border-color:var(--primary-light); }
+    .feature-icon { width:64px; height:64px; border-radius:18px; background:rgba(212,132,90,0.12);
+      display:flex; align-items:center; justify-content:center; font-size:28px; margin:0 auto 20px; }
+    .feature-card h3 { font-size:18px; font-weight:700; margin-bottom:10px; }
+    .feature-card p { font-size:14px; color:var(--text-light); line-height:1.6; }
+
+    /* ROOMS */
+    .rooms-section { padding:80px 5%; background:var(--bg); }
+    .rooms-filter { display:flex; gap:12px; margin-bottom:36px; flex-wrap:wrap; }
+    .filter-btn { padding:8px 20px; border-radius:50px; border:1.5px solid var(--border);
+      background:#fff; font-family:'Nunito',sans-serif; font-size:14px; font-weight:600;
+      cursor:pointer; color:var(--text-light); transition:.2s; }
+    .filter-btn.active, .filter-btn:hover { background:var(--primary); border-color:var(--primary); color:#fff; }
+    .rooms-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:24px; }
+    .room-card {
+      background:var(--bg-card); border-radius:var(--radius); overflow:hidden;
+      border:1.5px solid var(--border); transition:.3s; cursor:pointer;
+    }
+    .room-card:hover { transform:translateY(-6px); box-shadow:var(--shadow-hover); border-color:var(--primary-light); }
+    .room-img { height:200px; background:linear-gradient(135deg, #F2C185, #D4845A);
+      display:flex; align-items:center; justify-content:center; font-size:64px; position:relative; }
+    .room-badge { position:absolute; top:12px; left:12px; background:var(--success);
+      color:#fff; padding:4px 12px; border-radius:50px; font-size:12px; font-weight:700; }
+    .room-badge.occupied { background:#888; }
+    .room-body { padding:20px; }
+    .room-body h3 { font-size:16px; font-weight:700; margin-bottom:4px; }
+    .room-location { font-size:13px; color:var(--text-light); display:flex; align-items:center; gap:4px; margin-bottom:12px; }
+    .room-meta { display:flex; gap:16px; margin-bottom:14px; }
+    .room-meta-item { display:flex; align-items:center; gap:4px; font-size:13px; color:var(--text-light); }
+    .room-footer { display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:1px solid var(--border); }
+    .room-price { font-size:20px; font-weight:800; color:var(--primary); }
+    .room-price span { font-size:12px; font-weight:500; color:var(--text-light); }
+    .btn-sm { padding:7px 16px; border-radius:8px; font-size:13px; }
+
+    /* HOW IT WORKS */
+    .how { padding:80px 5%; background:#fff; }
+    .steps { display:grid; grid-template-columns:repeat(4,1fr); gap:24px; max-width:1100px; margin:0 auto; position:relative; }
+    .steps::before { content:''; position:absolute; top:36px; left:10%; right:10%; height:2px;
+      background:linear-gradient(90deg, var(--primary), var(--secondary)); z-index:0; }
+    .step { text-align:center; position:relative; z-index:1; }
+    .step-num { width:72px; height:72px; border-radius:50%; background:var(--primary);
+      color:#fff; font-size:22px; font-weight:800; display:flex; align-items:center;
+      justify-content:center; margin:0 auto 16px; border:4px solid var(--bg-card); box-shadow:var(--shadow); }
+    .step h4 { font-size:16px; font-weight:700; margin-bottom:8px; }
+    .step p { font-size:13px; color:var(--text-light); line-height:1.6; }
+
+    /* CTA */
+    .cta-section {
+      padding:80px 5%; background:linear-gradient(135deg, var(--bg-dark) 0%, #5C3520 100%);
+      text-align:center; color:#fff;
+    }
+    .cta-section h2 { font-family:'Playfair Display',serif; font-size:40px; margin-bottom:16px; }
+    .cta-section p { font-size:17px; opacity:.8; margin-bottom:36px; }
+    .btn-white { background:#fff; color:var(--primary); }
+    .btn-white:hover { background:var(--secondary); }
+
+    /* FOOTER */
+    footer { background:var(--bg-dark); color:#D4B09A; padding:60px 5% 30px; }
+    .footer-grid { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:40px; margin-bottom:40px; }
+    .footer-brand p { font-size:14px; line-height:1.7; margin-top:12px; opacity:.75; }
+    footer h4 { color:#fff; font-size:15px; margin-bottom:16px; }
+    footer ul { list-style:none; }
+    footer ul li { margin-bottom:10px; }
+    footer ul li a { color:#D4B09A; text-decoration:none; font-size:14px; opacity:.75; transition:.2s; }
+    footer ul li a:hover { opacity:1; color:var(--secondary); }
+    .footer-bottom { border-top:1px solid rgba(255,255,255,.1); padding-top:24px; text-align:center; font-size:13px; opacity:.5; }
+    .loading { text-align:center; padding:60px; font-size:16px; color:var(--text-light); }
+    .spinner { display:inline-block; width:32px; height:32px; border:3px solid var(--border);
+      border-top-color:var(--primary); border-radius:50%; animation:spin .8s linear infinite; margin-right:8px; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .empty-state { text-align:center; padding:60px; color:var(--text-light); }
+    .empty-state .empty-icon { font-size:56px; margin-bottom:16px; }
+    @media(max-width:900px){
+      .hero { flex-direction:column; padding:60px 5%; }
+      .hero-image { display:none; }
+      .features-grid { grid-template-columns:1fr; }
+      .steps { grid-template-columns:repeat(2,1fr); }
+      .footer-grid { grid-template-columns:1fr 1fr; }
+      .steps::before { display:none; }
+      nav .nav-links { display:none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="logo">
+    <div class="logo-icon"><i class="fa-solid fa-house-chimney"></i></div>
+    <span class="logo-text">Tro<span>Tot</span></span>
+  </a>
+  <div class="nav-links">
+    <a href="#rooms">Tìm phòng</a>
+    <a href="#how">Cách dùng</a>
+    <a href="#features">Tính năng</a>
+  </div>
+  <div class="nav-btns">
+    <a href="/login" class="btn btn-outline">Đăng nhập</a>
+    <a href="/register" class="btn btn-primary"><i class="fa-solid fa-user-plus"></i> Đăng ký</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge"><i class="fa-solid fa-star" style="color:#F2C185"></i> Nền tảng thuê phòng uy tín #1</div>
+    <h1>Tìm phòng trọ <span>ưng ý</span>, an tâm sinh sống</h1>
+    <p>Hàng trăm phòng trọ chất lượng, giá tốt. Kết nối trực tiếp với chủ nhà, ký hợp đồng minh bạch, thanh toán tiện lợi.</p>
+    <div class="search-box">
+      <i class="fa-solid fa-magnifying-glass" style="color:var(--primary-light); padding-left:8px;"></i>
+      <input type="text" id="searchInput" placeholder="Tìm theo tên tòa nhà, địa chỉ..."/>
+      <button class="btn btn-primary" onclick="searchRooms()"><i class="fa-solid fa-search"></i> Tìm kiếm</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num" id="statRooms">--</div><div class="stat-label">Phòng trống</div></div>
+      <div class="stat"><div class="stat-num" id="statBuildings">--</div><div class="stat-label">Tòa nhà</div></div>
+      <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Minh bạch</div></div>
+    </div>
+  </div>
+  <div class="hero-image">
+    <div class="hero-card-wrap">
+      <div class="hero-main-card">
+        <div class="hero-card-img">🏠</div>
+        <div class="hero-card-body">
+          <h3>Phòng Studio Hiện Đại</h3>
+          <p><i class="fa-solid fa-location-dot"></i> Quận 1, TP.HCM</p>
+          <div class="room-meta">
+            <span class="room-meta-item"><i class="fa-solid fa-expand"></i> 25m²</span>
+            <span class="room-meta-item"><i class="fa-solid fa-bed"></i> 1 phòng ngủ</span>
+          </div>
+          <div class="room-price">3.500.000<span>/tháng</span></div>
+        </div>
+      </div>
+      <div class="float-badge float-badge-1">
+        <div class="float-icon green"><i class="fa-solid fa-check"></i></div>
+        <div class="float-text"><strong>Đã xác minh</strong>Chủ nhà uy tín</div>
+      </div>
+      <div class="float-badge float-badge-2">
+        <div class="float-icon orange"><i class="fa-solid fa-bolt"></i></div>
+        <div class="float-text"><strong>Phản hồi nhanh</strong>Trong 24h</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="section-header">
+    <div class="section-tag">Tính năng nổi bật</div>
+    <h2>Quản lý phòng trọ <span style="color:var(--primary)">thông minh</span></h2>
+    <p>Giải pháp toàn diện cho cả chủ nhà và người thuê</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🏡</div>
+      <h3>Quản lý tòa nhà</h3>
+      <p>Dễ dàng quản lý nhiều tòa nhà, phòng trọ. Cập nhật trạng thái phòng theo thời gian thực.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📋</div>
+      <h3>Hợp đồng điện tử</h3>
+      <p>Tạo và quản lý hợp đồng thuê phòng minh bạch, lưu trữ lịch sử đầy đủ và rõ ràng.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💸</div>
+      <h3>Thanh toán tiện lợi</h3>
+      <p>Theo dõi hóa đơn điện, nước, dịch vụ. Thanh toán trực tuyến nhanh chóng, an toàn.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔧</div>
+      <h3>Bảo trì & sửa chữa</h3>
+      <p>Gửi yêu cầu sửa chữa ngay trên ứng dụng. Theo dõi tiến độ xử lý minh bạch.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔔</div>
+      <h3>Thông báo tự động</h3>
+      <p>Nhắc nhở hóa đơn đến hạn, hợp đồng sắp hết, yêu cầu mới cần xử lý.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <h3>Báo cáo & thống kê</h3>
+      <p>Tổng hợp doanh thu, công suất cho thuê, chi phí bảo trì một cách trực quan.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ROOMS -->
+<section class="rooms-section" id="rooms">
+  <div class="section-header">
+    <div class="section-tag">Phòng trống hiện có</div>
+    <h2>Tìm phòng <span style="color:var(--primary)">phù hợp</span> với bạn</h2>
+    <p>Danh sách phòng trọ chất lượng, cập nhật liên tục</p>
+  </div>
+  <div class="rooms-filter">
+    <button class="filter-btn active" onclick="filterRooms('all',this)">Tất cả</button>
+    <button class="filter-btn" onclick="filterRooms('cheap',this)">Dưới 3 triệu</button>
+    <button class="filter-btn" onclick="filterRooms('mid',this)">3 - 5 triệu</button>
+    <button class="filter-btn" onclick="filterRooms('high',this)">Trên 5 triệu</button>
+  </div>
+  <div class="rooms-grid" id="roomsGrid">
+    <div class="loading"><span class="spinner"></span> Đang tải danh sách phòng...</div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="section-header">
+    <div class="section-tag">Quy trình đơn giản</div>
+    <h2>Chỉ <span style="color:var(--primary)">4 bước</span> để có phòng ưng ý</h2>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h4>Tìm kiếm</h4>
+      <p>Duyệt danh sách phòng trống, lọc theo giá, diện tích, địa điểm</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h4>Liên hệ chủ nhà</h4>
+      <p>Nhận mã invite từ chủ nhà, đăng ký tài khoản và kết nối</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h4>Ký hợp đồng</h4>
+      <p>Hợp đồng điện tử minh bạch, rõ ràng mọi điều khoản</p>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <h4>Dọn vào ở</h4>
+      <p>Quản lý hóa đơn, báo sửa chữa ngay trên ứng dụng</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Sẵn sàng tìm phòng trọ ưng ý?</h2>
+  <p>Đăng ký miễn phí ngay hôm nay và khám phá hàng trăm phòng chất lượng</p>
+  <a href="/register" class="btn btn-white btn-primary" style="margin-right:12px; background:#fff; color:var(--primary);">
+    <i class="fa-solid fa-user-plus"></i> Đăng ký ngay
+  </a>
+  <a href="/login" class="btn btn-outline" style="border-color:rgba(255,255,255,.5); color:#fff;">
+    <i class="fa-solid fa-right-to-bracket"></i> Đăng nhập
+  </a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="/" class="logo" style="margin-bottom:12px; display:inline-flex;">
+        <div class="logo-icon"><i class="fa-solid fa-house-chimney"></i></div>
+        <span class="logo-text" style="color:#fff;">Tro<span>Tot</span></span>
+      </a>
+      <p>Nền tảng quản lý phòng trọ thông minh, kết nối chủ nhà và người thuê một cách minh bạch và tiện lợi.</p>
+    </div>
+    <div>
+      <h4>Dịch vụ</h4>
+      <ul>
+        <li><a href="#">Tìm phòng trọ</a></li>
+        <li><a href="#">Đăng phòng cho thuê</a></li>
+        <li><a href="#">Quản lý hợp đồng</a></li>
+        <li><a href="#">Thanh toán online</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Hỗ trợ</h4>
+      <ul>
+        <li><a href="#">Hướng dẫn sử dụng</a></li>
+        <li><a href="#">FAQ</a></li>
+        <li><a href="#">Liên hệ</a></li>
+        <li><a href="#">Chính sách</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Liên hệ</h4>
+      <ul>
+        <li><a href="#"><i class="fa-solid fa-envelope"></i> support@trotot.vn</a></li>
+        <li><a href="#"><i class="fa-solid fa-phone"></i> 1800 1234</a></li>
+        <li><a href="#"><i class="fa-brands fa-facebook"></i> Facebook</a></li>
+        <li><a href="#"><i class="fa-brands fa-zalo"></i> Zalo OA</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 TroTot. Hệ thống quản lý phòng trọ thông minh.</p>
+    <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08);font-size:12px;line-height:1.8;opacity:.75;">
+      <strong style="color:#fff;">Thành viên nhóm:</strong><br>
+      Thái Thiên Thuận — 2280603159 — thuankapa989@gmail.com<br>
+      Vũ Mạnh Cường — 2280600364<br>
+      Trần Văn Quyến — 2280602687 — quyentrannn1810@gmail.com<br>
+      <span style="white-space:nowrap">Phan Trung Hiếu — 2280619060 — trunghieuphan.31102002@gmail.com</span><br>
+      <strong style="color:#fff;">GVHD:</strong> Thầy Trịnh Đồng Thạch Trúc
+    </div>
+  </div>
+</footer>
+
+<script>
+  const API = '';
+  let allRooms = [];
+
+  const emojis = ['🏠','🏡','🏢','🏬','🏗️','🛋️'];
+  function randEmoji(){ return emojis[Math.floor(Math.random()*emojis.length)]; }
+
+  function fmt(n){ return new Intl.NumberFormat('vi-VN').format(n); }
+
+  async function loadRooms(){
+    try {
+      const res = await fetch(API + '/api/marketplace');
+      const data = await res.json();
+      allRooms = data.data || [];
+      document.getElementById('statRooms').textContent = allRooms.length;
+      const buildings = [...new Set(allRooms.map(r => r.buildingId))];
+      document.getElementById('statBuildings').textContent = buildings.length;
+      renderRooms(allRooms);
+    } catch(e) {
+      document.getElementById('roomsGrid').innerHTML = `
+        <div class="empty-state" style="grid-column:1/-1">
+          <div class="empty-icon">😔</div>
+          <p>Không thể tải danh sách phòng. Vui lòng thử lại.</p>
+        </div>`;
+    }
+  }
+
+  function renderRooms(rooms){
+    const grid = document.getElementById('roomsGrid');
+    if(!rooms.length){
+      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+        <div class="empty-icon">🏚️</div><p>Không có phòng trống phù hợp</p></div>`;
+      return;
+    }
+    grid.innerHTML = rooms.map(r => `
+      <div class="room-card" onclick="window.location='/login'">
+        <div class="room-img">
+          ${r.imageUrl ? `<img src="${r.imageUrl}" style="width:100%;height:100%;object-fit:cover"/>` : `<span>${randEmoji()}</span>`}
+          <div class="room-badge">${r.status === 'AVAILABLE' ? 'Còn phòng' : 'Đã thuê'}</div>
+        </div>
+        <div class="room-body">
+          <h3>${r.roomNo ? 'Phòng ' + r.roomNo : 'Phòng trọ'}</h3>
+          <div class="room-location"><i class="fa-solid fa-location-dot"></i> ${r.buildingName || r.buildingAddress || 'Hồ Chí Minh'}</div>
+          <div class="room-meta">
+            ${r.area ? `<span class="room-meta-item"><i class="fa-solid fa-expand"></i> ${r.area}m²</span>` : ''}
+            ${r.beds ? `<span class="room-meta-item"><i class="fa-solid fa-bed"></i> ${r.beds} giường</span>` : ''}
+          </div>
+          ${r.amenities ? `<p style="font-size:12px;color:var(--text-light);margin-bottom:8px">${r.amenities}</p>` : ''}
+          <div class="room-footer">
+            <div class="room-price">${fmt(r.price)}<span>đ/tháng</span></div>
+            <button class="btn btn-primary btn-sm">Xem chi tiết</button>
+          </div>
+        </div>
+      </div>`).join('');
+  }
+
+  function filterRooms(type, btn){
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    let filtered = allRooms;
+    if(type === 'cheap') filtered = allRooms.filter(r => r.price < 3000000);
+    else if(type === 'mid') filtered = allRooms.filter(r => r.price >= 3000000 && r.price <= 5000000);
+    else if(type === 'high') filtered = allRooms.filter(r => r.price > 5000000);
+    renderRooms(filtered);
+  }
+
+  function searchRooms(){
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    const filtered = allRooms.filter(r =>
+      (r.buildingName||'').toLowerCase().includes(q) ||
+      (r.buildingAddress||'').toLowerCase().includes(q) ||
+      (r.roomNo||'').toLowerCase().includes(q)
+    );
+    renderRooms(filtered);
+    document.getElementById('rooms').scrollIntoView({behavior:'smooth'});
+  }
+
+  document.getElementById('searchInput').addEventListener('keypress', e => { if(e.key==='Enter') searchRooms(); });
+
+  loadRooms();
+</script>
+</body>
+</html>

@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%23E8622A%27/%3E%3Cpath d=%27M16 7l-9 8h3v9h5v-5h2v5h5V15h3z%27 fill=%27white%27/%3E%3C/svg%3E">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RentalMS - Kênh thông tin phòng trọ uy tín</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    :root {
+      --green: #22C55E; --green-d: #16A34A; --green-l: #DCFCE7;
+      --orange: #F97316; --orange-l: #FFF7ED;
+      --text: #1F2937; --text2: #4B5563; --text3: #9CA3AF;
+      --border: #E5E7EB; --bg: #F3F4F6; --white: #fff;
+      --shadow: 0 2px 8px rgba(0,0,0,0.08); --radius: 8px;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Nunito',sans-serif; background:var(--bg); color:var(--text); font-size:14px; }
+    a { text-decoration:none; color:inherit; }
+
+    /* ── HEADER ── */
+    .header { background:#fff; border-bottom:2px solid var(--green); position:sticky; top:0; z-index:500; }
+    .header-top { max-width:1200px; margin:0 auto; padding:10px 16px; display:flex; align-items:center; gap:12px; }
+    .logo { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+    .logo-box { width:38px; height:38px; background:var(--green); border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:18px; font-weight:800; }
+    .logo-text { font-size:18px; font-weight:800; color:#052E16; line-height:1; }
+    .logo-sub { font-size:10px; color:var(--text3); }
+
+    .search-bar { flex:1; max-width:440px; display:flex; align-items:center; border:1.5px solid var(--border); border-radius:6px; overflow:hidden; background:#fff; }
+    .search-bar:focus-within { border-color:var(--green); }
+    .search-bar input { flex:1; border:none; outline:none; padding:9px 12px; font-family:'Nunito',sans-serif; font-size:13px; }
+    .search-bar button { padding:9px 16px; background:var(--green); color:#fff; border:none; font-weight:700; font-size:13px; cursor:pointer; font-family:'Nunito',sans-serif; display:flex; align-items:center; gap:5px; }
+    .search-bar button:hover { background:var(--green-d); }
+
+    .header-right { margin-left:auto; display:flex; align-items:center; gap:10px; position:relative; z-index:300; }
+    .btn-dashboard { background:var(--green); color:#fff; padding:8px 16px; border-radius:6px; font-weight:700; font-size:13px; display:flex; align-items:center; gap:6px; }
+    .btn-dashboard:hover { background:var(--green-d); }
+    .btn-login { border:1.5px solid var(--green); color:var(--green); padding:7px 14px; border-radius:6px; font-weight:700; font-size:13px; }
+    .btn-login:hover { background:var(--green-l); }
+    .btn-register { background:var(--orange); color:#fff; padding:8px 14px; border-radius:6px; font-weight:700; font-size:13px; }
+    .btn-register:hover { opacity:.9; }
+    .btn-post { background:var(--orange); color:#fff; padding:8px 14px; border-radius:6px; font-weight:700; font-size:13px; display:flex; align-items:center; gap:5px; }
+    .notif-btn { width:36px; height:36px; border-radius:6px; border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; color:var(--text3); cursor:pointer; position:relative; }
+    .notif-dot { position:absolute; top:5px; right:5px; width:7px; height:7px; background:#EF4444; border-radius:50%; border:2px solid #fff; }
+    .user-chip { display:flex; align-items:center; gap:8px; padding:5px 10px; border:1.5px solid var(--border); border-radius:6px; cursor:pointer; position:relative; }
+    .user-chip:hover { border-color:var(--green); }
+    .avatar { width:30px; height:30px; border-radius:50%; background:var(--green); color:#fff; font-weight:700; display:flex; align-items:center; justify-content:center; font-size:12px; }
+    .user-name-chip { font-size:13px; font-weight:700; max-width:90px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .user-role-chip { font-size:10px; color:var(--text3); }
+    .user-dd { position:fixed; top:0; right:16px; width:280px; background:#fff; border:1px solid var(--border);
+      border-radius:14px; box-shadow:0 12px 40px rgba(0,0,0,.15); display:none; z-index:9999; overflow:hidden;
+      animation:ddSlide .2s ease; }
+    @keyframes ddSlide { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
+    .user-chip.open .user-dd { display:block; }
+    .dd-head { padding:18px 18px 14px; background:linear-gradient(135deg,#1B2B4B,#2d4a7a); position:relative; }
+    .dd-head-row { display:flex; align-items:center; gap:12px; }
+    .dd-avatar-lg { width:44px; height:44px; border-radius:50%; background:var(--orange); color:#fff; font-weight:800;
+      display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; border:2px solid rgba(255,255,255,.3); overflow:hidden; }
+    .dd-avatar-lg img { width:100%; height:100%; object-fit:cover; }
+    .dd-name { font-weight:700; font-size:14px; color:#fff; line-height:1.3; }
+    .dd-email { font-size:11.5px; color:rgba(255,255,255,.6); margin-top:1px; }
+    .dd-role-badge { display:inline-flex; align-items:center; gap:4px; margin-top:8px; padding:3px 10px;
+      border-radius:20px; font-size:10.5px; font-weight:700; letter-spacing:.3px;
+      background:rgba(255,255,255,.15); color:rgba(255,255,255,.9); }
+    .dd-body { padding:6px 0; }
+    .dd-item { display:flex; align-items:center; gap:10px; padding:10px 18px; font-size:13px; font-weight:600;
+      cursor:pointer; border:none; background:none; width:100%; text-align:left; color:var(--text);
+      text-decoration:none; transition:.15s; }
+    .dd-item:hover { background:#F0F4F8; }
+    .dd-item i { width:18px; text-align:center; font-size:14px; }
+    .dd-item.red { color:#EF4444; }
+    .dd-item.red:hover { background:#FEF2F2; }
+    .dd-sep { height:1px; background:var(--border); margin:4px 12px; }
+
+    /* ── CATEGORY NAV ── */
+    .cat-nav { background:#fff; border-bottom:1px solid var(--border); position:relative; z-index:100; }
+    .cat-nav-inner { max-width:1200px; margin:0 auto; padding:0 16px; display:flex; overflow-x:auto; scrollbar-width:none; }
+    .cat-nav-inner::-webkit-scrollbar { display:none; }
+    .cat-tab { padding:12px 16px; font-size:13px; font-weight:600; color:var(--text3); border-bottom:2px solid transparent; cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:5px; transition:.15s; }
+    .cat-tab:hover { color:var(--green-d); }
+    .cat-tab.active { color:var(--green-d); border-bottom-color:var(--green); }
+
+    /* ── LAYOUT ── */
+    .wrap { max-width:1200px; margin:0 auto; padding:16px; display:grid; grid-template-columns:1fr 300px; gap:16px; align-items:start; }
+
+    /* ── MAIN ── */
+    .main {}
+    .list-header { background:#fff; border-radius:var(--radius); padding:14px 16px; margin-bottom:12px; border:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+    .list-title { font-size:17px; font-weight:800; }
+    .list-count { font-size:12px; color:var(--text3); margin-top:2px; }
+    .sort-row { display:flex; gap:6px; }
+    .sort-btn { padding:6px 12px; border-radius:5px; font-size:12px; font-weight:700; border:1.5px solid var(--border); background:#fff; color:var(--text3); cursor:pointer; }
+    .sort-btn.active, .sort-btn:hover { border-color:var(--green); color:var(--green-d); background:var(--green-l); }
+
+    /* ── LISTING CARD (like phongtro123) ── */
+    .listing-card { background:#fff; border:1px solid var(--border); border-radius:var(--radius); margin-bottom:12px; overflow:hidden; transition:.2s; cursor:pointer; }
+    .listing-card:hover { box-shadow:0 4px 20px rgba(0,0,0,0.10); border-color:#BBF7D0; }
+    .listing-inner { display:flex; gap:0; }
+
+    .listing-img { width:220px; flex-shrink:0; position:relative; background:linear-gradient(135deg,#052E16,#166534,#22C55E); min-height:164px; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+    .listing-img img { width:100%; height:100%; object-fit:cover; position:absolute; inset:0; }
+    .listing-img-placeholder { font-size:48px; color:rgba(255,255,255,.25); position:relative; z-index:1; }
+    .img-count { position:absolute; bottom:8px; left:8px; background:rgba(0,0,0,.6); color:#fff; font-size:11px; font-weight:700; padding:2px 8px; border-radius:4px; display:flex; align-items:center; gap:4px; z-index:2; }
+    .vip-badge { position:absolute; top:8px; left:8px; background:#F59E0B; color:#fff; font-size:10px; font-weight:800; padding:2px 8px; border-radius:4px; z-index:2; letter-spacing:.5px; }
+
+    .listing-body { flex:1; padding:12px 16px; display:flex; flex-direction:column; gap:6px; min-width:0; }
+    .listing-title { font-size:15px; font-weight:800; color:#111827; line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    .listing-title:hover { color:var(--green-d); }
+    .listing-price { font-size:17px; font-weight:800; color:var(--orange); }
+    .listing-price .sep { color:var(--text3); font-size:13px; font-weight:400; margin:0 4px; }
+    .listing-price .area { font-size:13px; color:var(--text2); font-weight:600; }
+    .listing-meta { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+    .listing-meta span { font-size:12px; color:var(--text2); display:flex; align-items:center; gap:4px; }
+    .listing-meta i { color:var(--green); font-size:11px; }
+    .listing-loc { font-size:12px; color:var(--text3); display:flex; align-items:center; gap:4px; margin-top:2px; }
+    .listing-loc i { color:var(--green); }
+    .listing-desc { font-size:12px; color:var(--text3); line-height:1.5; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    .listing-footer { display:flex; align-items:center; justify-content:space-between; margin-top:auto; padding-top:8px; border-top:1px solid #F9FAFB; }
+    .listing-owner { display:flex; align-items:center; gap:6px; }
+    .owner-dot { width:8px; height:8px; border-radius:50%; background:var(--green); }
+    .owner-name { font-size:12px; font-weight:700; color:var(--text2); }
+    .owner-time { font-size:11px; color:var(--text3); }
+    .listing-actions { display:flex; gap:6px; }
+    .btn-call { padding:7px 14px; border-radius:5px; background:var(--green); color:#fff; font-size:12px; font-weight:700; border:none; cursor:pointer; display:flex; align-items:center; gap:4px; }
+    .btn-apply { padding:7px 14px; border-radius:5px; background:var(--orange); color:#fff; font-size:12px; font-weight:700; border:none; cursor:pointer; display:flex; align-items:center; gap:4px; }
+    .btn-apply:hover { opacity:.9; }
+    .btn-call:hover { background:var(--green-d); }
+
+    /* ── SKELETON ── */
+    .skeleton { background:linear-gradient(90deg,#F3F4F6 25%,#E5E7EB 50%,#F3F4F6 75%); background-size:200% 100%; animation:sk 1.5s infinite; border-radius:6px; }
+    @keyframes sk { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    .sk-card { background:#fff; border:1px solid var(--border); border-radius:var(--radius); margin-bottom:12px; overflow:hidden; display:flex; height:164px; }
+    .sk-img { width:220px; background:#F3F4F6; flex-shrink:0; }
+    .sk-body { flex:1; padding:16px; display:flex; flex-direction:column; gap:10px; }
+
+    .empty-box { background:#fff; border:1px solid var(--border); border-radius:var(--radius); padding:60px 20px; text-align:center; }
+    .empty-box i { font-size:40px; color:#D1D5DB; margin-bottom:12px; display:block; }
+    .empty-box h3 { font-size:15px; color:var(--text3); margin-bottom:6px; }
+    .empty-box p { font-size:12px; color:#D1D5DB; }
+
+    /* ── SIDEBAR ── */
+    .sidebar { display:flex; flex-direction:column; gap:14px; }
+
+    .cta-card { background:linear-gradient(145deg,#052E16,#14532D); border-radius:var(--radius); padding:18px; color:#fff; display:none; }
+    .cta-card.show { display:block; }
+    .cta-icon { font-size:24px; margin-bottom:8px; }
+    .cta-title { font-size:14px; font-weight:800; margin-bottom:4px; }
+    .cta-sub { font-size:11px; color:rgba(255,255,255,.7); line-height:1.5; margin-bottom:12px; }
+    .cta-rows { background:rgba(255,255,255,.1); border-radius:6px; padding:10px; margin-bottom:12px; }
+    .cta-row { display:flex; justify-content:space-between; font-size:11px; margin-bottom:4px; }
+    .cta-row:last-child { margin:0; }
+    .cta-label { color:rgba(255,255,255,.6); }
+    .cta-value { color:#4ADE80; font-weight:700; }
+    .btn-dash { display:flex; align-items:center; justify-content:center; gap:6px; width:100%; padding:10px; background:var(--green); border-radius:6px; color:#fff; font-weight:700; font-size:13px; }
+    .btn-dash:hover { background:var(--green-d); }
+
+    .widget { background:#fff; border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+    .widget-head { padding:12px 14px; font-size:13px; font-weight:800; color:#111827; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:6px; }
+    .widget-head i { color:var(--green); }
+    .filter-links { padding:6px; }
+    .fl { display:flex; align-items:center; justify-content:space-between; padding:8px 10px; border-radius:5px; border:none; background:none; width:100%; cursor:pointer; font-size:13px; font-weight:600; color:var(--text2); font-family:'Nunito',sans-serif; text-align:left; }
+    .fl:hover { background:var(--green-l); color:var(--green-d); }
+    .fl.active { background:var(--green-l); color:var(--green-d); }
+    .fl i { color:var(--green); font-size:10px; }
+    .fl-right { display:flex; align-items:center; gap:6px; font-size:11px; color:var(--text3); }
+
+    .latest-item { display:flex; gap:10px; padding:10px 14px; border-bottom:1px solid #F9FAFB; cursor:pointer; transition:.15s; }
+    .latest-item:last-child { border:none; }
+    .latest-item:hover { background:#F9FAFB; }
+    .latest-thumb { width:52px; height:52px; border-radius:6px; background:linear-gradient(135deg,#052E16,#22C55E); display:flex; align-items:center; justify-content:center; font-size:18px; color:rgba(255,255,255,.35); flex-shrink:0; overflow:hidden; }
+    .latest-thumb img { width:100%; height:100%; object-fit:cover; }
+    .latest-info { flex:1; min-width:0; }
+    .latest-name { font-size:12px; font-weight:700; color:#111827; line-height:1.3; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    .latest-price { font-size:12px; font-weight:700; color:var(--orange); margin-top:2px; }
+    .latest-loc { font-size:11px; color:var(--text3); margin-top:1px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+    /* ── DETAIL MODAL ── */
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:600; display:none; align-items:flex-start; justify-content:center; padding:20px; overflow-y:auto; }
+    .modal-overlay.open { display:flex; }
+    .modal { background:#fff; border-radius:12px; width:100%; max-width:860px; margin:auto; box-shadow:0 20px 60px rgba(0,0,0,.2); overflow:hidden; }
+    .modal-head { padding:18px 22px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+    .modal-head-title { font-size:17px; font-weight:800; }
+    .modal-close { width:34px; height:34px; border-radius:6px; border:none; background:#F3F4F6; color:var(--text3); cursor:pointer; font-size:15px; display:flex; align-items:center; justify-content:center; }
+    .modal-close:hover { background:#FEE2E2; color:#EF4444; }
+    .modal-body { display:flex; gap:0; }
+    .modal-left { flex:1; overflow-y:auto; max-height:80vh; }
+    .modal-right { width:280px; flex-shrink:0; border-left:1px solid var(--border); padding:20px; display:flex; flex-direction:column; gap:14px; }
+
+    /* Gallery */
+    .room-gallery { background:#111; display:flex; flex-direction:column; border-radius:0; }
+    .gallery-main { height:300px; position:relative; overflow:hidden; background:linear-gradient(135deg,#052E16,#166534,#22C55E); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .gallery-main img { width:100%; height:100%; object-fit:cover; display:block; }
+    .gallery-main video { width:100%; height:100%; object-fit:contain; display:block; background:#000; }
+    .room-gallery-placeholder { font-size:64px; color:rgba(255,255,255,.2); }
+    .gallery-nav { position:absolute; top:50%; transform:translateY(-50%); background:rgba(0,0,0,.55); color:#fff; border:none; width:38px; height:38px; border-radius:50%; cursor:pointer; font-size:15px; display:flex; align-items:center; justify-content:center; z-index:5; transition:.15s; }
+    .gallery-nav:hover { background:rgba(0,0,0,.82); }
+    .gallery-prev { left:12px; }
+    .gallery-next { right:12px; }
+    .gallery-counter { position:absolute; bottom:10px; right:12px; background:rgba(0,0,0,.6); color:#fff; font-size:12px; font-weight:700; padding:3px 10px; border-radius:50px; pointer-events:none; }
+    .gallery-thumbs { display:flex; gap:5px; padding:7px 8px; background:#1a1a1a; overflow-x:auto; scrollbar-width:thin; scrollbar-color:rgba(255,255,255,.2) transparent; flex-shrink:0; }
+    .gallery-thumbs::-webkit-scrollbar { height:4px; }
+    .gallery-thumbs::-webkit-scrollbar-thumb { background:rgba(255,255,255,.2); border-radius:2px; }
+    .gallery-thumb { width:72px; height:54px; border-radius:4px; overflow:hidden; cursor:pointer; flex-shrink:0; position:relative; border:2px solid transparent; opacity:.65; transition:.15s; }
+    .gallery-thumb:hover { opacity:.9; }
+    .gallery-thumb.active { border-color:#fff; opacity:1; }
+    .gallery-thumb img, .gallery-thumb video { width:100%; height:100%; object-fit:cover; display:block; }
+    .gallery-vid-badge { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,.38); color:#fff; font-size:18px; pointer-events:none; }
+
+    .detail-section { padding:18px 20px; border-bottom:1px solid var(--border); }
+    .detail-section:last-child { border:none; }
+    .detail-price { font-size:22px; font-weight:800; color:var(--orange); margin-bottom:4px; }
+    .detail-title { font-size:17px; font-weight:800; color:#111827; margin-bottom:8px; line-height:1.4; }
+    .detail-chips { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px; }
+    .chip { padding:4px 12px; border-radius:50px; font-size:12px; font-weight:700; }
+    .chip-green { background:var(--green-l); color:var(--green-d); }
+    .chip-gray { background:#F3F4F6; color:var(--text2); }
+    .chip-orange { background:var(--orange-l); color:var(--orange); }
+    .detail-addr { display:flex; align-items:flex-start; gap:6px; font-size:13px; color:var(--text2); }
+    .detail-addr i { color:var(--green); margin-top:2px; flex-shrink:0; }
+
+    .info-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .info-item { background:#F9FAFB; border-radius:6px; padding:10px 12px; }
+    .info-label { font-size:11px; color:var(--text3); font-weight:700; text-transform:uppercase; letter-spacing:.5px; margin-bottom:4px; }
+    .info-value { font-size:14px; font-weight:700; color:#111827; }
+
+    .amenity-list { display:flex; flex-wrap:wrap; gap:6px; }
+    .amenity-tag { padding:4px 10px; border-radius:50px; background:#F0FDF4; color:var(--green-d); font-size:12px; font-weight:600; display:flex; align-items:center; gap:4px; }
+    .amenity-tag i { font-size:10px; }
+
+    .building-info-box { background:#F9FAFB; border-radius:6px; padding:12px; }
+    .building-info-name { font-size:14px; font-weight:800; margin-bottom:4px; }
+    .building-info-addr { font-size:12px; color:var(--text3); display:flex; align-items:center; gap:4px; }
+    .building-info-addr i { color:var(--green); }
+
+    /* Contact box */
+    .contact-box { border:1px solid var(--border); border-radius:8px; padding:14px; }
+    .contact-owner { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+    .contact-avatar { width:44px; height:44px; border-radius:50%; background:var(--green); color:#fff; font-size:16px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .contact-name { font-size:14px; font-weight:800; }
+    .contact-active { font-size:11px; color:var(--green); font-weight:600; }
+    .btn-green-full { width:100%; padding:11px; background:var(--green); color:#fff; border:none; border-radius:6px; font-size:14px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:8px; font-family:'Nunito',sans-serif; }
+    .btn-green-full:hover { background:var(--green-d); }
+    .btn-orange-full { width:100%; padding:11px; background:var(--orange); color:#fff; border:none; border-radius:6px; font-size:14px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; font-family:'Nunito',sans-serif; }
+    .btn-orange-full:hover { opacity:.9; }
+    .btn-outline-full { width:100%; padding:10px; background:#fff; color:var(--text2); border:1.5px solid var(--border); border-radius:6px; font-size:13px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; margin-top:6px; font-family:'Nunito',sans-serif; }
+    .btn-outline-full:hover { border-color:var(--green); color:var(--green-d); }
+
+    /* Apply form */
+    .apply-form { display:none; margin-top:10px; border-top:1px solid var(--border); padding-top:12px; }
+    .apply-form.show { display:block; }
+    .form-group { margin-bottom:10px; }
+    .form-group label { display:block; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--text2); }
+    .form-group input, .form-group textarea { width:100%; border:1.5px solid var(--border); border-radius:5px; padding:8px 10px; font-size:13px; font-family:'Nunito',sans-serif; outline:none; }
+    .form-group input:focus, .form-group textarea:focus { border-color:var(--green); }
+
+    /* ── TOAST ── */
+    .toast { position:fixed; bottom:24px; right:24px; z-index:999; background:#111827; color:#fff; padding:12px 20px; border-radius:8px; font-size:13px; font-weight:600; display:flex; align-items:center; gap:8px; transform:translateY(80px); opacity:0; transition:.3s; max-width:320px; }
+    .toast.show { transform:translateY(0); opacity:1; }
+    .toast.error { background:#991B1B; }
+    .toast i { color:var(--green); }
+    .toast.error i { color:#FCA5A5; }
+
+    /* Breadcrumb */
+    .breadcrumb { max-width:1200px; margin:0 auto; padding:8px 16px; font-size:12px; color:var(--text3); display:flex; align-items:center; gap:4px; }
+    .breadcrumb a { color:var(--green-d); }
+    .breadcrumb a:hover { text-decoration:underline; }
+
+    /* Note box */
+    .note-box { background:#FFFBEB; border:1px solid #FDE68A; border-radius:6px; padding:10px 12px; font-size:11px; color:#92400E; line-height:1.6; }
+    .note-box a { color:#92400E; text-decoration:underline; }
+
+    /* Profile modal */
+    .profile-modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:600; align-items:center; justify-content:center; padding:16px; }
+    .profile-modal-overlay.open { display:flex; }
+    .profile-modal { background:#fff; border-radius:16px; width:100%; max-width:620px; max-height:92vh; overflow-y:auto; box-shadow:0 24px 60px rgba(0,0,0,.25); }
+    .profile-modal-head { padding:18px 24px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; background:#fff; z-index:5; }
+    .profile-modal-head h3 { font-size:17px; font-weight:800; margin:0; }
+    .profile-modal-close { background:none; border:none; font-size:20px; cursor:pointer; color:var(--text3); width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+    .profile-modal-close:hover { background:#f3f4f6; }
+    .profile-modal-body { padding:24px; }
+    .profile-modal-footer { padding:16px 24px; border-top:1px solid var(--border); display:flex; gap:10px; justify-content:flex-end; }
+    .profile-avatar-wrap { display:flex; flex-direction:column; align-items:center; margin-bottom:20px; }
+    .profile-avatar-zone { width:88px; height:88px; border-radius:50%; border:3px dashed var(--border); cursor:pointer; overflow:hidden; display:flex; align-items:center; justify-content:center; background:#f9fafb; transition:.2s; position:relative; }
+    .profile-avatar-zone:hover { border-color:var(--green); }
+    .profile-avatar-zone img { width:100%; height:100%; object-fit:cover; }
+    .profile-avatar-hint { margin-top:7px; font-size:11px; color:var(--text3); font-weight:600; }
+    .profile-sec-title { font-size:12px; font-weight:800; color:var(--green-d); text-transform:uppercase; letter-spacing:.6px; margin:18px 0 10px; padding-bottom:6px; border-bottom:1px solid var(--border); }
+    .cccd-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .cccd-zone { border:2px dashed var(--border); border-radius:8px; padding:14px 10px; text-align:center; cursor:pointer; transition:.2s; min-height:90px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; overflow:hidden; }
+    .cccd-zone:hover { border-color:var(--green); background:#f0fdf4; }
+    .cccd-zone img { width:100%; height:72px; object-fit:cover; border-radius:4px; }
+    .cccd-zone i { font-size:20px; color:var(--text3); }
+    .cccd-zone-lbl { font-size:11px; color:var(--text3); font-weight:700; }
+    .profile-incomplete-banner { background:#FEF3C7; border:1px solid #FCD34D; border-radius:8px; padding:10px 14px; font-size:13px; color:#92400E; display:flex; align-items:center; gap:8px; margin-bottom:12px; cursor:pointer; }
+    .profile-incomplete-banner:hover { background:#fde68a; }
+    /* header avatar img */
+    .avatar-img { width:100%; height:100%; border-radius:50%; object-fit:cover; }
+
+    @media(max-width:900px) {
+      .wrap { grid-template-columns:1fr; }
+      .sidebar { display:none; }
+      .listing-img { width:160px; min-height:130px; }
+      .modal-body { flex-direction:column; }
+      .modal-right { width:100%; border-left:none; border-top:1px solid var(--border); }
+      .modal-left { max-height:none; }
+    }
+    @media(max-width:600px) {
+      .listing-inner { flex-direction:column; }
+      .listing-img { width:100%; height:180px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header class="header">
+  <div class="header-top">
+    <a href="/rentalms" class="logo">
+      <div class="logo-box">R</div>
+      <div>
+        <div class="logo-text">RentalMS</div>
+        <div class="logo-sub">Kênh phòng trọ uy tín</div>
+      </div>
+    </a>
+
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Tìm theo tên tòa nhà, địa chỉ..." onkeydown="if(event.key==='Enter')doSearch()"/>
+      <button onclick="doSearch()"><i class="fa-solid fa-magnifying-glass"></i> Tìm kiếm</button>
+    </div>
+
+    <div class="header-right" id="headerRight">
+      <!-- rendered by JS -->
+    </div>
+  </div>
+
+  <nav class="cat-nav">
+    <div class="cat-nav-inner">
+      <div class="cat-tab active" onclick="filterCat(this,'')"><i class="fa-solid fa-border-all"></i> Tất cả</div>
+      <div class="cat-tab" onclick="filterCat(this,'phong tro')"><i class="fa-solid fa-door-open"></i> Phòng trọ</div>
+      <div class="cat-tab" onclick="filterCat(this,'nha nguyen can')"><i class="fa-solid fa-house"></i> Nhà nguyên căn</div>
+      <div class="cat-tab" onclick="filterCat(this,'can ho')"><i class="fa-solid fa-building"></i> Căn hộ</div>
+      <div class="cat-tab" onclick="filterCat(this,'studio')"><i class="fa-solid fa-couch"></i> Studio</div>
+      <div class="cat-tab" onclick="filterCat(this,'o ghep')"><i class="fa-solid fa-people-group"></i> Ở ghép</div>
+    </div>
+  </nav>
+</header>
+
+<!-- Breadcrumb -->
+<div class="breadcrumb">
+  <a href="/rentalms">RentalMS</a>
+  <i class="fa-solid fa-chevron-right" style="font-size:9px"></i>
+  <span id="breadCat">Phòng trọ</span>
+  <i class="fa-solid fa-chevron-right" style="font-size:9px"></i>
+  <span>Tất cả khu vực</span>
+</div>
+
+<!-- ── MAIN LAYOUT ── -->
+<div class="wrap">
+
+  <!-- LISTINGS -->
+  <main class="main">
+    <div class="list-header">
+      <div>
+        <div class="list-title">Kênh thông tin phòng trọ RentalMS</div>
+        <div class="list-count" id="listCount">Đang tải...</div>
+      </div>
+      <div class="sort-row">
+        <button class="sort-btn active" onclick="sortBy(this,'newest')">Mới nhất</button>
+        <button class="sort-btn" onclick="sortBy(this,'price_asc')">Giá tăng dần</button>
+        <button class="sort-btn" onclick="sortBy(this,'price_desc')">Giá giảm dần</button>
+      </div>
+    </div>
+    <div id="listingsList"></div>
+  </main>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <!-- CTA card (hiện khi có hợp đồng ACTIVE) -->
+    <div class="cta-card" id="ctaCard">
+      <div class="cta-icon">🏠</div>
+      <div class="cta-title">Bạn đang có hợp đồng thuê!</div>
+      <div class="cta-sub">Quản lý hóa đơn, gửi yêu cầu bảo trì và xem thông tin phòng của bạn.</div>
+      <div class="cta-rows">
+        <div class="cta-row"><span class="cta-label">Trạng thái</span><span class="cta-value">Đang hoạt động</span></div>
+        <div class="cta-row"><span class="cta-label">Thuê đến</span><span class="cta-value" id="ctaEndDate">--</span></div>
+      </div>
+      <a href="/dashboard" class="btn-dash"><i class="fa-solid fa-gauge-high"></i> Vào Dashboard ngay</a>
+    </div>
+
+    <!-- Giá -->
+    <div class="widget">
+      <div class="widget-head"><i class="fa-solid fa-tag"></i> Xem theo khoảng giá</div>
+      <div class="filter-links">
+        <button class="fl" onclick="setPrice(this,0,1000000)"><i class="fa-solid fa-chevron-right"></i> Dưới 1 triệu</button>
+        <button class="fl" onclick="setPrice(this,1000000,2000000)"><i class="fa-solid fa-chevron-right"></i> 1 - 2 triệu</button>
+        <button class="fl" onclick="setPrice(this,2000000,3000000)"><i class="fa-solid fa-chevron-right"></i> 2 - 3 triệu</button>
+        <button class="fl" onclick="setPrice(this,3000000,5000000)"><i class="fa-solid fa-chevron-right"></i> 3 - 5 triệu</button>
+        <button class="fl" onclick="setPrice(this,5000000,7000000)"><i class="fa-solid fa-chevron-right"></i> 5 - 7 triệu</button>
+        <button class="fl" onclick="setPrice(this,7000000,999999999)"><i class="fa-solid fa-chevron-right"></i> Trên 7 triệu</button>
+        <button class="fl active" onclick="setPrice(this,0,999999999)"><i class="fa-solid fa-chevron-right"></i> <b>Tất cả mức giá</b></button>
+      </div>
+    </div>
+
+    <!-- Diện tích -->
+    <div class="widget">
+      <div class="widget-head"><i class="fa-solid fa-ruler-combined"></i> Xem theo diện tích</div>
+      <div class="filter-links">
+        <button class="fl" onclick="setArea(this,0,20)"><i class="fa-solid fa-chevron-right"></i> Dưới 20 m²</button>
+        <button class="fl" onclick="setArea(this,20,30)"><i class="fa-solid fa-chevron-right"></i> 20 - 30 m²</button>
+        <button class="fl" onclick="setArea(this,30,50)"><i class="fa-solid fa-chevron-right"></i> 30 - 50 m²</button>
+        <button class="fl" onclick="setArea(this,50,70)"><i class="fa-solid fa-chevron-right"></i> 50 - 70 m²</button>
+        <button class="fl" onclick="setArea(this,70,9999)"><i class="fa-solid fa-chevron-right"></i> Trên 70 m²</button>
+        <button class="fl active" onclick="setArea(this,0,9999)"><i class="fa-solid fa-chevron-right"></i> <b>Tất cả diện tích</b></button>
+      </div>
+    </div>
+
+    <!-- Tin mới đăng -->
+    <div class="widget">
+      <div class="widget-head"><i class="fa-solid fa-clock-rotate-left"></i> Tin mới đăng</div>
+      <div id="latestList"><div style="padding:14px;color:var(--text3);font-size:12px">Đang tải...</div></div>
+    </div>
+
+  </aside>
+</div>
+
+<!-- ── ROOM DETAIL MODAL ── -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-head-title" id="detailTitle">Chi tiết phòng</div>
+      <button class="modal-close" onclick="closeDetail()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <!-- Left: room info -->
+      <div class="modal-left">
+        <div class="room-gallery" id="detailGallery">
+          <div class="room-gallery-placeholder">🏠</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-price" id="detailPrice"></div>
+          <div class="detail-title" id="detailRoomTitle"></div>
+          <div class="detail-chips" id="detailChips"></div>
+          <div class="detail-addr" id="detailAddr"></div>
+        </div>
+        <div class="detail-section">
+          <div style="font-size:13px;font-weight:800;margin-bottom:10px">Thông tin chi tiết</div>
+          <div class="info-grid" id="detailInfoGrid"></div>
+        </div>
+        <div class="detail-section" id="detailAmenitiesSection" style="display:none">
+          <div style="font-size:13px;font-weight:800;margin-bottom:10px">Tiện nghi nổi bật</div>
+          <div class="amenity-list" id="detailAmenities"></div>
+        </div>
+        <div class="detail-section" id="detailDescSection" style="display:none">
+          <div style="font-size:13px;font-weight:800;margin-bottom:10px">Thông tin mô tả</div>
+          <div id="detailDesc" style="font-size:13px;color:var(--text2);line-height:1.8;white-space:pre-line"></div>
+        </div>
+        <div class="detail-section">
+          <div style="font-size:13px;font-weight:800;margin-bottom:10px">Thông tin tòa nhà</div>
+          <div class="building-info-box">
+            <div class="building-info-name" id="detailBldName"></div>
+            <div class="building-info-addr"><i class="fa-solid fa-location-dot"></i><span id="detailBldAddr"></span></div>
+          </div>
+        </div>
+        <!-- Map -->
+        <div class="detail-section" id="detailMapSection">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <div style="font-size:13px;font-weight:800"><i class="fa-solid fa-map-location-dot" style="color:var(--green);margin-right:4px"></i> Vị trí trên bản đồ</div>
+            <div style="display:flex;gap:6px">
+              <a id="detailDirectionBtn" href="#" target="_blank" style="display:none;align-items:center;gap:5px;padding:6px 14px;border-radius:8px;background:#4285F4;color:#fff;font-size:12px;font-weight:700;text-decoration:none;transition:.2s">
+                <i class="fa-solid fa-diamond-turn-right"></i> Dẫn đường
+              </a>
+              <a id="detailGmapBtn" href="#" target="_blank" style="display:none;align-items:center;gap:5px;padding:6px 14px;border-radius:8px;background:#fff;border:1px solid var(--border);color:var(--text);font-size:12px;font-weight:700;text-decoration:none;transition:.2s">
+                <i class="fa-solid fa-up-right-from-square"></i> Mở Google Maps
+              </a>
+            </div>
+          </div>
+          <div id="detailMap" style="height:320px;border-radius:12px;border:1px solid var(--border);overflow:hidden;position:relative">
+            <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text3);font-size:13px"><span class="spinner" style="margin-right:8px"></span>Đang tải bản đồ...</div>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <div class="note-box">
+            <b>Lưu ý:</b> Chỉ đặt cọc khi xác định được chủ nhà và có thỏa thuận biên nhận rõ ràng.
+            Kiểm tra mọi điều khoản và yêu cầu liệt kê tất cả chi phí hàng tháng vào hợp đồng.
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: contact & apply -->
+      <div class="modal-right">
+        <div class="contact-box">
+          <div class="contact-owner">
+            <div class="contact-avatar" id="detailOwnerAvatar">C</div>
+            <div>
+              <div class="contact-name" id="detailBldNameShort"></div>
+              <div class="contact-active"><i class="fa-solid fa-circle" style="font-size:8px"></i> Đang hoạt động</div>
+            </div>
+          </div>
+          <button class="btn-green-full" id="detailCallBtn" onclick="openContactOwner()"><i class="fa-solid fa-phone"></i> Liên hệ chủ nhà</button>
+          <button class="btn-orange-full" id="detailApplyBtn" onclick="toggleApplyForm()">
+            <i class="fa-solid fa-file-signature"></i> Đăng ký thuê
+          </button>
+          <div class="apply-form" id="applyFormBox">
+            <div class="form-group">
+              <label>Ngày bắt đầu *</label>
+              <input type="date" id="modalStartDate"/>
+            </div>
+            <div class="form-group">
+              <label>Ngày kết thúc *</label>
+              <input type="date" id="modalEndDate"/>
+            </div>
+            <div class="form-group">
+              <label>Ghi chú</label>
+              <textarea id="modalNote" rows="3" placeholder="Giới thiệu bản thân..."></textarea>
+            </div>
+            <button class="btn-green-full" onclick="submitApplyModal()" style="margin-bottom:0">
+              <i class="fa-solid fa-paper-plane"></i> Gửi yêu cầu
+            </button>
+          </div>
+          <button class="btn-outline-full" onclick="closeDetail()"><i class="fa-solid fa-arrow-left"></i> Quay lại danh sách</button>
+        </div>
+
+        <div style="font-size:12px;font-weight:800;color:var(--text2);margin-bottom:6px">Tin đăng nổi bật</div>
+        <div id="relatedList" style="font-size:12px;color:var(--text3)">Đang tải...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast"><i class="fa-solid fa-circle-check"></i><span id="toastMsg"></span></div>
+
+<!-- Contact Owner Modal -->
+<div class="modal-overlay" id="contactOwnerModal" onclick="if(event.target===this)closeContactOwner()" style="z-index:700">
+  <div style="background:#fff;border-radius:20px;max-width:400px;width:92%;max-height:90vh;overflow-y:auto;animation:ddSlide .25s ease;box-shadow:0 25px 80px rgba(0,0,0,.25)">
+    <div style="background:linear-gradient(135deg,#1B2B4B,#2d4a7a);padding:28px 24px 20px;border-radius:20px 20px 0 0;text-align:center;position:relative">
+      <button onclick="closeContactOwner()" style="position:absolute;top:14px;right:14px;background:rgba(255,255,255,.15);border:none;width:32px;height:32px;border-radius:50%;color:#fff;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center">&times;</button>
+      <div id="coAvatar" style="width:72px;height:72px;border-radius:50%;background:var(--primary);color:#fff;font-weight:800;font-size:24px;display:inline-flex;align-items:center;justify-content:center;border:3px solid rgba(255,255,255,.3);margin-bottom:10px;overflow:hidden"></div>
+      <div id="coName" style="font-size:18px;font-weight:800;color:#fff"></div>
+      <div id="coBuildingName" style="font-size:12px;color:rgba(255,255,255,.6);margin-top:4px"></div>
+    </div>
+    <div style="padding:20px 24px">
+      <div style="display:grid;gap:10px;margin-bottom:18px">
+        <div style="display:flex;align-items:center;gap:12px;padding:12px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0">
+          <div style="width:36px;height:36px;border-radius:8px;background:rgba(59,130,246,.1);display:flex;align-items:center;justify-content:center"><i class="fa-solid fa-phone" style="color:#3b82f6"></i></div>
+          <div><div style="font-size:11px;color:#94a3b8">Điện thoại</div><div id="coPhone" style="font-weight:700;font-size:14px"></div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:12px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0">
+          <div style="width:36px;height:36px;border-radius:8px;background:rgba(239,68,68,.1);display:flex;align-items:center;justify-content:center"><i class="fa-solid fa-envelope" style="color:#ef4444"></i></div>
+          <div><div style="font-size:11px;color:#94a3b8">Email</div><div id="coEmail" style="font-weight:700;font-size:14px"></div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:12px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0">
+          <div style="width:36px;height:36px;border-radius:8px;background:rgba(34,197,94,.1);display:flex;align-items:center;justify-content:center"><i class="fa-solid fa-location-dot" style="color:#22c55e"></i></div>
+          <div><div style="font-size:11px;color:#94a3b8">Địa chỉ</div><div id="coAddress" style="font-weight:600;font-size:13px"></div></div>
+        </div>
+      </div>
+      <!-- Zalo QR Section -->
+      <div id="coZaloSection" style="display:none">
+        <div style="text-align:center;padding:18px;background:linear-gradient(135deg,#e8f4fd,#f0f7ff);border-radius:14px;border:1px solid #bfdbfe">
+          <div style="font-size:13px;font-weight:800;color:#0068FF;margin-bottom:4px"><i class="fa-solid fa-comment-dots"></i> Liên hệ qua Zalo</div>
+          <div style="font-size:11px;color:#64748b;margin-bottom:12px">Quét mã QR bên dưới bằng ứng dụng Zalo</div>
+          <div id="coZaloQR" style="margin-bottom:12px"></div>
+          <a id="coZaloBtn" href="#" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:10px 24px;border-radius:10px;background:#0068FF;color:#fff;font-weight:700;font-size:13px;text-decoration:none;transition:.2s">
+            <i class="fa-solid fa-comment-dots"></i> Nhắn tin Zalo
+          </a>
+        </div>
+      </div>
+      <div id="coNoPhone" style="display:none;text-align:center;padding:14px;background:#fef9ee;border-radius:10px;border:1px solid #fde68a;font-size:12px;color:#92400e">
+        <i class="fa-solid fa-circle-info"></i> Chủ nhà chưa cập nhật số điện thoại. Vui lòng liên hệ qua Email.
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px">
+        <a id="coZaloLinkBtn" href="#" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:11px;border-radius:10px;background:#0068FF;color:#fff;font-weight:700;font-size:13px;text-decoration:none"><i class="fa-solid fa-comment-dots"></i> Liên hệ Zalo</a>
+        <button onclick="closeContactOwner()" style="padding:11px;border-radius:10px;background:#f1f5f9;color:#64748b;font-weight:700;font-size:13px;border:none;cursor:pointer;font-family:'Nunito',sans-serif">Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Profile Modal -->
+<div class="profile-modal-overlay" id="profileModalOverlay" onclick="if(event.target===this)closeProfileModal()">
+  <div class="profile-modal">
+    <div class="profile-modal-head">
+      <h3><i class="fa-solid fa-id-card" style="color:var(--green);margin-right:8px"></i>Thông tin cá nhân</h3>
+      <button class="profile-modal-close" onclick="closeProfileModal()">✕</button>
+    </div>
+    <div class="profile-modal-body">
+      <div class="profile-avatar-wrap">
+        <div class="profile-avatar-zone" onclick="document.getElementById('avatarFileInput').click()" title="Đổi ảnh đại diện">
+          <img id="profileAvatarPreview" src="" alt="" style="display:none"/>
+          <span id="profileAvatarInitials" style="font-size:28px;font-weight:800;color:var(--green-d)"></span>
+        </div>
+        <div class="profile-avatar-hint"><i class="fa-solid fa-camera"></i> Nhấn để đổi ảnh đại diện</div>
+        <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="handleAvatarSelect(event)"/>
+        <input type="hidden" id="profileAvatarUrl"/>
+      </div>
+      <div class="profile-sec-title">Thông tin cơ bản</div>
+      <div class="form-group"><label>Họ và tên *</label><input type="text" id="pfFullName" placeholder="Nguyễn Văn A"/></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group"><label>Số điện thoại *</label><input type="tel" id="pfPhone" placeholder="0901234567"/></div>
+        <div class="form-group"><label>Email</label><input type="text" id="pfEmail" disabled style="background:#f3f4f6;color:#666"/></div>
+      </div>
+      <div class="profile-sec-title">Căn cước công dân (CCCD)</div>
+      <div class="form-group"><label>Số CCCD / CMND *</label><input type="text" id="pfCccdNumber" placeholder="001234567890" maxlength="20"/></div>
+      <div class="cccd-row" style="margin-top:10px">
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px">Mặt trước CCCD *</div>
+          <div class="cccd-zone" id="cccdFrontZone" onclick="document.getElementById('cccdFrontInput').click()">
+            <i class="fa-solid fa-id-card" id="cccdFrontIcon"></i>
+            <img id="cccdFrontPreview" src="" alt="" style="display:none"/>
+            <div class="cccd-zone-lbl" id="cccdFrontLbl">Bấm để tải ảnh</div>
+          </div>
+          <input type="file" id="cccdFrontInput" accept="image/*" style="display:none" onchange="handleCccdUpload(event,'front')"/>
+          <input type="hidden" id="pfCccdFrontUrl"/>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px">Mặt sau CCCD *</div>
+          <div class="cccd-zone" id="cccdBackZone" onclick="document.getElementById('cccdBackInput').click()">
+            <i class="fa-solid fa-id-card" id="cccdBackIcon"></i>
+            <img id="cccdBackPreview" src="" alt="" style="display:none"/>
+            <div class="cccd-zone-lbl" id="cccdBackLbl">Bấm để tải ảnh</div>
+          </div>
+          <input type="file" id="cccdBackInput" accept="image/*" style="display:none" onchange="handleCccdUpload(event,'back')"/>
+          <input type="hidden" id="pfCccdBackUrl"/>
+        </div>
+      </div>
+      <div class="profile-sec-title">Tài khoản ngân hàng</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group"><label>Số tài khoản *</label><input type="text" id="pfBankAccount" placeholder="1234567890"/></div>
+        <div class="form-group"><label>Tên ngân hàng *</label><input type="text" id="pfBankName" placeholder="Vietcombank"/></div>
+      </div>
+      <div id="profileSaveMsg" style="display:none;padding:8px 12px;border-radius:6px;font-size:13px;margin-top:8px"></div>
+    </div>
+    <div class="profile-modal-footer">
+      <button onclick="closeProfileModal()" style="padding:9px 20px;border:1.5px solid var(--border);background:#fff;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif">Đóng</button>
+      <button onclick="saveProfile()" style="padding:9px 22px;background:var(--green);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif"><i class="fa-solid fa-floppy-disk"></i> Lưu thông tin</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API = '';
+  let allRooms = [];
+  let filteredRooms = [];
+  let currentSort = 'newest';
+  let catFilter = '';
+  let priceMin = 0, priceMax = 999999999;
+  let areaMin = 0, areaMax = 9999;
+  let currentDetailRoom = null;
+  let userInfo = null;
+  let activeContract = null;
+
+  const token = localStorage.getItem('token');
+  const userData = JSON.parse(localStorage.getItem('user') || '{}');
+
+  // ── INIT ──
+  async function init() {
+    renderHeader();
+    await Promise.all([loadRooms(), checkContracts(), loadMyProfile()]);
+  }
+
+  function getRole() {
+    return (userData.role || '').toUpperCase().replace('ROLE_', '');
+  }
+
+  // ── HEADER ──
+  function renderHeader() {
+    const right = document.getElementById('headerRight');
+    if (!token) {
+      right.innerHTML = `
+        <a href="/dashboard" class="btn-dashboard"><i class="fa-solid fa-gauge-high"></i> Trọ của tôi</a>
+        <a href="/login" class="btn-login">Đăng nhập</a>
+        <a href="/register" class="btn-register">Đăng ký</a>`;
+      return;
+    }
+    const name = userData.fullName || 'Người dùng';
+    const role = getRole();
+    const roleLabel = { TENANT:'Người thuê', OWNER:'Chủ nhà', MANAGER:'Quản lý', ADMIN:'Admin' }[role] || role;
+    const initials = name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    const avatarHtml = (myProfile && myProfile.avatarUrl)
+      ? `<img src="${myProfile.avatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.parentElement.textContent='${initials}'">`
+      : initials;
+    const profileIncomplete = myProfile && !myProfile.profileComplete && role !== 'ADMIN';
+    const profileMenuItem = role !== 'ADMIN' ? `
+          <button class="dd-item" onclick="openProfileModal();document.getElementById('userChip').classList.remove('open')">
+            <i class="fa-solid fa-user-pen" style="color:var(--orange)"></i> Thông tin cá nhân
+            ${profileIncomplete ? '<span style="color:#e53935;font-size:10px;margin-left:4px">●</span>' : ''}
+          </button>
+          <div class="dd-sep"></div>` : '';
+    const dashLabel = role === 'ADMIN' ? 'Quản lý và báo cáo' : 'Trọ của tôi';
+    right.innerHTML = `
+      <a href="/dashboard" class="btn-dashboard"><i class="fa-solid fa-gauge-high"></i> ${dashLabel}</a>
+      <div class="notif-btn" onclick="location.href='/dashboard'">
+        <i class="fa-regular fa-bell"></i>
+        <span class="notif-dot" id="notifDot" style="display:none"></span>
+      </div>
+      <div class="user-chip" id="userChip" onclick="toggleChipDropdown(this)">
+        <div class="avatar">${avatarHtml}</div>
+        <div>
+          <div class="user-name-chip">${esc(name)}</div>
+          <div class="user-role-chip">${roleLabel}</div>
+        </div>
+        <i class="fa-solid fa-chevron-down" style="font-size:9px;color:var(--text3)"></i>
+        <div class="user-dd">
+          <div class="dd-head">
+            <div class="dd-head-row">
+              <div class="dd-avatar-lg">
+                ${(myProfile && myProfile.avatarUrl) ? `<img src="${myProfile.avatarUrl}">` : initials}
+              </div>
+              <div>
+                <div class="dd-name">${esc(name)}</div>
+                <div class="dd-email">${esc(userData.email || '')}</div>
+              </div>
+            </div>
+            <div class="dd-role-badge"><i class="fa-solid fa-shield-halved"></i> ${roleLabel}</div>
+          </div>
+          <div class="dd-body">
+            ${role === 'ADMIN'
+              ? `<a href="/dashboard" class="dd-item"><i class="fa-solid fa-gauge-high" style="color:var(--green)"></i> Quản lý và báo cáo</a>
+                 <a href="/notifications" class="dd-item"><i class="fa-solid fa-bell" style="color:var(--orange)"></i> Thông báo</a>`
+              : `<a href="/dashboard" class="dd-item"><i class="fa-solid fa-gauge-high" style="color:var(--green)"></i> Trọ của tôi</a>
+                 ${profileMenuItem}
+                 <a href="/notifications" class="dd-item"><i class="fa-solid fa-bell" style="color:var(--orange)"></i> Thông báo</a>`
+            }
+            <div class="dd-sep"></div>
+            <button class="dd-item red" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</button>
+          </div>
+        </div>
+      </div>`;
+    document.addEventListener('click', e => {
+      const chip = document.getElementById('userChip');
+      if (chip && !chip.contains(e.target)) chip.classList.remove('open');
+    });
+
+    window.toggleChipDropdown = function(chip) {
+      chip.classList.toggle('open');
+      const dd = chip.querySelector('.user-dd');
+      if (dd && chip.classList.contains('open')) {
+        const rect = chip.getBoundingClientRect();
+        dd.style.top = (rect.bottom + 8) + 'px';
+        dd.style.right = (window.innerWidth - rect.right) + 'px';
+      }
+    };
+  }
+
+  // ── CONTRACTS ──
+  async function checkContracts() {
+    if (!token) return;
+    try {
+      const res = await fetch(API + '/api/contracts', { headers: { 'Authorization': 'Bearer ' + token } });
+      if (!res.ok) return;
+      const data = await res.json();
+      const contracts = data.data || [];
+      activeContract = contracts.find(c => c.status === 'ACTIVE' || c.status === 'EXTENDED');
+      if (activeContract) {
+        document.getElementById('ctaCard').classList.add('show');
+        if (activeContract.endDate) {
+          document.getElementById('ctaEndDate').textContent = new Date(activeContract.endDate).toLocaleDateString('vi-VN');
+        }
+        if (document.getElementById('notifDot')) document.getElementById('notifDot').style.display = 'block';
+      }
+    } catch(e) {}
+  }
+
+  // ── LOAD ROOMS ──
+  async function loadRooms() {
+    document.getElementById('listingsList').innerHTML = renderSkeletons(4);
+    try {
+      const kw = document.getElementById('searchInput').value.trim();
+      const params = new URLSearchParams({ keyword: kw });
+      if (priceMin > 0) params.set('minPrice', priceMin);
+      if (priceMax < 999999999) params.set('maxPrice', priceMax);
+      if (areaMin > 0) params.set('minArea', areaMin);
+      if (areaMax < 9999) params.set('maxArea', areaMax);
+
+      const res = await fetch(API + '/api/marketplace/rooms?' + params);
+      const data = await res.json();
+      allRooms = data.data || [];
+      applyFilters();
+      renderLatest();
+    } catch(e) {
+      document.getElementById('listingsList').innerHTML =
+        `<div class="empty-box"><i class="fa-solid fa-triangle-exclamation"></i><h3>Không thể tải dữ liệu</h3><p>Vui lòng thử lại sau.</p></div>`;
+    }
+  }
+
+  function applyFilters() {
+    let list = [...allRooms];
+    if (catFilter) {
+      const cf = catFilter.toLowerCase();
+      list = list.filter(r =>
+        (r.buildingName || '').toLowerCase().includes(cf) ||
+        (r.buildingDescription || '').toLowerCase().includes(cf) ||
+        (r.description || '').toLowerCase().includes(cf)
+      );
+    }
+    if (currentSort === 'newest') {
+      list.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    } else if (currentSort === 'price_asc') {
+      list.sort((a, b) => (a.price || 0) - (b.price || 0));
+    } else if (currentSort === 'price_desc') {
+      list.sort((a, b) => (b.price || 0) - (a.price || 0));
+    }
+    filteredRooms = list;
+    renderListings(list);
+  }
+
+  function renderSkeletons(n) {
+    return Array(n).fill('').map(() => `
+      <div class="sk-card">
+        <div class="sk-img"></div>
+        <div class="sk-body">
+          <div class="skeleton" style="height:18px;width:70%"></div>
+          <div class="skeleton" style="height:22px;width:40%"></div>
+          <div class="skeleton" style="height:14px;width:55%"></div>
+          <div class="skeleton" style="height:14px;width:80%"></div>
+          <div class="skeleton" style="height:14px;width:45%"></div>
+        </div>
+      </div>`).join('');
+  }
+
+  function fmtPrice(p) {
+    const n = Number(p);
+    if (n >= 1000000) return (n / 1000000).toFixed(1).replace('.0','') + ' triệu';
+    if (n >= 1000) return (n / 1000).toFixed(0) + ' nghìn';
+    return n.toLocaleString('vi-VN');
+  }
+
+  function timeAgo(d) {
+    if (!d) return '';
+    const diff = (Date.now() - new Date(d)) / 1000;
+    if (diff < 3600) return Math.floor(diff / 60) + ' phút trước';
+    if (diff < 86400) return Math.floor(diff / 3600) + ' giờ trước';
+    return Math.floor(diff / 86400) + ' ngày trước';
+  }
+
+  function renderListings(list) {
+    document.getElementById('listCount').textContent =
+      `Có ${list.length} tin đăng đang hiển thị`;
+    if (!list.length) {
+      document.getElementById('listingsList').innerHTML = `
+        <div class="empty-box">
+          <i class="fa-solid fa-building-circle-xmark"></i>
+          <h3>Chưa có khu nhà trọ nào</h3>
+          <p>Thử tìm kiếm với từ khóa khác hoặc xóa bộ lọc.</p>
+        </div>`;
+      return;
+    }
+    document.getElementById('listingsList').innerHTML = list.map((r, idx) => renderCard(r, idx)).join('');
+  }
+
+  function renderCard(r, idx) {
+    const price = fmtPrice(r.price) + '/tháng';
+    const area = r.area ? r.area + ' m²' : '';
+    const loc = r.buildingAddress || '';
+    const ago = timeAgo(r.createdAt);
+    const isVip = idx < 3;
+    const imgUrls = r.imageUrl ? r.imageUrl.split(',').map(s=>s.trim()).filter(Boolean) : [];
+    const thumbUrl = imgUrls[0] || null;
+    const imgTag = thumbUrl
+      ? `<img src="${esc(thumbUrl)}" alt="Phòng ${esc(r.roomNo)}" loading="lazy"/>`
+      : `<div class="listing-img-placeholder">🏠</div>`;
+    const amenityPreview = r.amenities ? r.amenities.split(',').slice(0,3).map(a => a.trim()).filter(Boolean).join(' · ') : '';
+    const mediaCount = imgUrls.length + (r.videoUrl ? 1 : 0);
+
+    return `
+    <div class="listing-card" onclick="openDetail(${r.id})">
+      <div class="listing-inner">
+        <div class="listing-img">
+          ${imgTag}
+          ${isVip ? '<div class="vip-badge">⭐ NỔI BẬT</div>' : ''}
+          <div class="img-count"><i class="fa-regular fa-image"></i> ${mediaCount||1}</div>
+        </div>
+        <div class="listing-body">
+          <div class="listing-title">Phòng ${esc(r.roomNo)} – ${esc(r.buildingName)}</div>
+          <div class="listing-price">
+            <span style="color:var(--orange)">${price}</span>
+            ${area ? `<span class="sep">·</span><span class="area">${area}</span>` : ''}
+          </div>
+          <div class="listing-meta">
+            ${area ? `<span><i class="fa-solid fa-ruler-combined"></i> ${area}</span>` : ''}
+            ${r.beds ? `<span><i class="fa-solid fa-bed"></i> ${r.beds} giường</span>` : ''}
+            <span><i class="fa-solid fa-shield-halved"></i> Đã xác minh</span>
+          </div>
+          <div class="listing-loc"><i class="fa-solid fa-location-dot"></i> ${esc(loc)}</div>
+          ${amenityPreview ? `<div class="listing-desc"><i class="fa-solid fa-star" style="color:#F59E0B;font-size:10px"></i> ${esc(amenityPreview)}</div>` : ''}
+          <div class="listing-footer">
+            <div class="listing-owner">
+              <div class="owner-dot"></div>
+              <span class="owner-name">${esc(r.buildingName)}</span>
+              ${ago ? `<span class="owner-time">· ${ago}</span>` : ''}
+            </div>
+            <div class="listing-actions" onclick="event.stopPropagation()">
+              <button class="btn-call" onclick="showToast('Xem chi tiết để liên hệ chủ nhà')"><i class="fa-solid fa-phone"></i> Liên hệ</button>
+              ${token && getRole()==='TENANT' ?
+                `<button class="btn-apply" onclick="openDetailAndApply(${r.id})"><i class="fa-solid fa-file-signature"></i> Đăng ký</button>` :
+                `<button class="btn-apply" onclick="openDetail(${r.id})"><i class="fa-solid fa-eye"></i> Xem</button>`
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  // ── LATEST ──
+  function renderLatest() {
+    const latest = [...allRooms]
+      .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
+      .slice(0, 5);
+    if (!latest.length) {
+      document.getElementById('latestList').innerHTML = '<div style="padding:12px;color:var(--text3);font-size:12px">Chưa có dữ liệu</div>';
+      return;
+    }
+    document.getElementById('latestList').innerHTML = latest.map(r => `
+      <div class="latest-item" onclick="openDetail(${r.id})">
+        <div class="latest-thumb">
+          ${r.imageUrl ? `<img src="${esc(r.imageUrl.split(',')[0].trim())}" loading="lazy"/>` : '<i class="fa-solid fa-building"></i>'}
+        </div>
+        <div class="latest-info">
+          <div class="latest-name">Phòng ${esc(r.roomNo)} – ${esc(r.buildingName)}</div>
+          <div class="latest-price">${fmtPrice(r.price)}/tháng</div>
+          <div class="latest-loc">${esc(r.buildingAddress || '')}</div>
+        </div>
+      </div>`).join('');
+  }
+
+  // ── GALLERY ──
+  let _galleryIdx = 0;
+  let _galleryItems = []; // {type:'img'|'vid', src}
+  let _galleryRoomNo = '';
+
+  function buildGallery(el, imgs, vid, roomNo) {
+    _galleryItems = [];
+    _galleryRoomNo = roomNo || '';
+    imgs.forEach(u => _galleryItems.push({type:'img', src:u}));
+    if (vid) _galleryItems.push({type:'vid', src:vid});
+    _galleryIdx = 0;
+
+    if (!_galleryItems.length) {
+      el.innerHTML = `<div class="gallery-main"><div class="room-gallery-placeholder">🏠</div></div>`;
+      return;
+    }
+
+    const total = _galleryItems.length;
+    const navHTML = total > 1 ? `
+      <button class="gallery-nav gallery-prev" onclick="galleryPrev(event)"><i class="fa-solid fa-chevron-left"></i></button>
+      <button class="gallery-nav gallery-next" onclick="galleryNext(event)"><i class="fa-solid fa-chevron-right"></i></button>
+      <div class="gallery-counter" id="galCounter">1 / ${total}</div>` : '';
+
+    const thumbsHTML = total > 1 ? `
+      <div class="gallery-thumbs" id="galThumbs">
+        ${_galleryItems.map((item, i) => `
+          <div class="gallery-thumb${i===0?' active':''}" data-gi="${i}" onclick="galleryGoTo(event,${i})">
+            ${item.type === 'vid'
+              ? `<video src="${esc(item.src)}" preload="metadata"></video><div class="gallery-vid-badge"><i class="fa-solid fa-play"></i></div>`
+              : `<img src="${esc(item.src)}" loading="lazy"/>`}
+          </div>`).join('')}
+      </div>` : '';
+
+    el.innerHTML = `
+      <div class="gallery-main" id="galMain">
+        ${_mainSlideHTML(0)}
+        ${navHTML}
+      </div>
+      ${thumbsHTML}`;
+  }
+
+  function _mainSlideHTML(idx) {
+    const item = _galleryItems[idx];
+    return item.type === 'vid'
+      ? `<video src="${esc(item.src)}" controls></video>`
+      : `<img src="${esc(item.src)}" alt="Phòng ${esc(_galleryRoomNo)}"/>`;
+  }
+
+  function _updateGallery() {
+    const main = document.getElementById('galMain');
+    if (!main) return;
+    // swap media
+    const old = main.querySelector('img, video');
+    if (old) old.remove();
+    const tmp = document.createElement('div');
+    tmp.innerHTML = _mainSlideHTML(_galleryIdx);
+    main.insertBefore(tmp.firstElementChild, main.firstChild);
+    // counter
+    const ctr = document.getElementById('galCounter');
+    if (ctr) ctr.textContent = `${_galleryIdx+1} / ${_galleryItems.length}`;
+    // thumbs
+    document.querySelectorAll('#galThumbs .gallery-thumb').forEach((t, i) => {
+      t.classList.toggle('active', i === _galleryIdx);
+    });
+    // scroll active thumb into view
+    const active = document.querySelector('#galThumbs .gallery-thumb.active');
+    active?.scrollIntoView({block:'nearest', inline:'center', behavior:'smooth'});
+  }
+
+  function galleryPrev(e) { e.stopPropagation(); _galleryIdx = (_galleryIdx - 1 + _galleryItems.length) % _galleryItems.length; _updateGallery(); }
+  function galleryNext(e) { e.stopPropagation(); _galleryIdx = (_galleryIdx + 1) % _galleryItems.length; _updateGallery(); }
+  function galleryGoTo(e, i) { e.stopPropagation(); _galleryIdx = i; _updateGallery(); }
+
+  // ── DETAIL MODAL ──
+  function openDetail(roomId) {
+    const r = allRooms.find(x => x.id === roomId);
+    if (!r) return;
+    currentDetailRoom = r;
+    fillDetail(r);
+    document.getElementById('detailModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function openDetailAndApply(roomId) {
+    if (!checkProfileBeforeApply()) return;
+    openDetail(roomId);
+    setTimeout(() => {
+      document.getElementById('applyFormBox').classList.add('show');
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('modalStartDate').value = today;
+    }, 100);
+  }
+
+  function fillDetail(r) {
+    document.getElementById('detailTitle').textContent = `Phòng ${r.roomNo} – ${r.buildingName}`;
+    document.getElementById('detailRoomTitle').textContent = `Phòng ${r.roomNo} – ${r.buildingName}`;
+    document.getElementById('detailPrice').textContent = fmtPrice(r.price) + '/tháng';
+    document.getElementById('detailBldName').textContent = r.buildingName;
+    document.getElementById('detailBldNameShort').textContent = r.buildingName;
+    document.getElementById('detailBldAddr').textContent = r.buildingAddress || '';
+    document.getElementById('detailOwnerAvatar').textContent = (r.buildingName || 'C')[0].toUpperCase();
+
+    // Gallery
+    const gallery = document.getElementById('detailGallery');
+    const imgs = r.imageUrl ? r.imageUrl.split(',').map(s=>s.trim()).filter(Boolean) : [];
+    const vid = r.videoUrl || null;
+    buildGallery(gallery, imgs, vid, r.roomNo);
+
+    // Chips
+    document.getElementById('detailChips').innerHTML = `
+      <span class="chip chip-green">Còn trống</span>
+      ${r.area ? `<span class="chip chip-gray">${r.area} m²</span>` : ''}
+      ${r.beds ? `<span class="chip chip-gray">${r.beds} giường</span>` : ''}
+    `;
+
+    // Address
+    document.getElementById('detailAddr').innerHTML =
+      `<i class="fa-solid fa-location-dot"></i><span>${esc(r.buildingAddress || 'Chưa cập nhật địa chỉ')}</span>`;
+
+    // Info grid
+    document.getElementById('detailInfoGrid').innerHTML = [
+      ['Giá thuê', fmtPrice(r.price) + '/tháng'],
+      ['Diện tích', r.area ? r.area + ' m²' : 'Chưa cập nhật'],
+      ['Số giường', r.beds ? r.beds + ' giường' : 'Chưa cập nhật'],
+      ['Tòa nhà', r.buildingName],
+    ].map(([l, v]) => `<div class="info-item"><div class="info-label">${l}</div><div class="info-value">${esc(v)}</div></div>`).join('');
+
+    // Amenities
+    if (r.amenities) {
+      const tags = r.amenities.split(',').map(a => a.trim()).filter(Boolean);
+      document.getElementById('detailAmenities').innerHTML = tags.map(a =>
+        `<div class="amenity-tag"><i class="fa-solid fa-check"></i> ${esc(a)}</div>`).join('');
+      document.getElementById('detailAmenitiesSection').style.display = 'block';
+    } else {
+      document.getElementById('detailAmenitiesSection').style.display = 'none';
+    }
+
+    // Description
+    const desc = r.description || r.buildingDescription || '';
+    if (desc) {
+      document.getElementById('detailDesc').textContent = desc;
+      document.getElementById('detailDescSection').style.display = 'block';
+    } else {
+      document.getElementById('detailDescSection').style.display = 'none';
+    }
+
+    // Apply button state
+    const applyBtn = document.getElementById('detailApplyBtn');
+    document.getElementById('applyFormBox').classList.remove('show');
+    document.getElementById('modalStartDate').value = '';
+    document.getElementById('modalEndDate').value = '';
+    document.getElementById('modalNote').value = '';
+
+    if (!token) {
+      applyBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Đăng nhập để thuê';
+      applyBtn.onclick = () => { window.location.href = '/login'; };
+    } else if (getRole() !== 'TENANT') {
+      applyBtn.innerHTML = '<i class="fa-solid fa-info-circle"></i> Chỉ người thuê mới đăng ký';
+      applyBtn.disabled = true;
+      applyBtn.style.opacity = '.5';
+    } else {
+      applyBtn.innerHTML = '<i class="fa-solid fa-file-signature"></i> Đăng ký thuê';
+      applyBtn.disabled = false;
+      applyBtn.style.opacity = '1';
+      applyBtn.onclick = toggleApplyForm;
+    }
+
+    // Related
+    const related = allRooms.filter(x => x.id !== r.id && x.buildingId === r.buildingId).slice(0, 3);
+    document.getElementById('relatedList').innerHTML = related.length ? related.map(x => `
+      <div style="display:flex;gap:8px;margin-bottom:8px;cursor:pointer" onclick="openDetail(${x.id})">
+        <div style="width:44px;height:44px;border-radius:5px;background:linear-gradient(135deg,#052E16,#22C55E);display:flex;align-items:center;justify-content:center;font-size:16px;color:rgba(255,255,255,.3);flex-shrink:0;overflow:hidden">
+          ${x.imageUrl ? `<img src="${esc(x.imageUrl.split(',')[0].trim())}" style="width:100%;height:100%;object-fit:cover"/>` : '🏠'}
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;line-height:1.3">Phòng ${esc(x.roomNo)}</div>
+          <div style="font-size:12px;font-weight:700;color:var(--orange)">${fmtPrice(x.price)}/tháng</div>
+        </div>
+      </div>`).join('') : '<div style="font-size:12px;color:var(--text3)">Không có phòng khác trong tòa nhà này</div>';
+
+    // Render map
+    loadDetailMap(r);
+  }
+
+  function loadDetailMap(r) {
+    const mapEl = document.getElementById('detailMap');
+    const dirBtn = document.getElementById('detailDirectionBtn');
+    const gmapBtn = document.getElementById('detailGmapBtn');
+    dirBtn.style.display = 'none';
+    gmapBtn.style.display = 'none';
+
+    const address = r.buildingAddress || r.address || '';
+    if (!address) {
+      mapEl.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text3);font-size:13px">Không có thông tin địa chỉ</div>';
+      return;
+    }
+
+    const fullAddress = address;
+    const encodedAddr = encodeURIComponent(fullAddress);
+
+    // Google Maps Embed (miễn phí, không cần API key)
+    mapEl.innerHTML = `<iframe
+      src="https://maps.google.com/maps?q=${encodedAddr}&t=m&z=16&output=embed&iwloc=near"
+      style="width:100%;height:100%;border:none;border-radius:12px"
+      allowfullscreen loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"></iframe>`;
+
+    // Nút dẫn đường (mở Google Maps Directions)
+    dirBtn.href = 'https://www.google.com/maps/dir/?api=1&destination=' + encodedAddr;
+    dirBtn.style.display = 'inline-flex';
+
+    // Nút mở Google Maps
+    gmapBtn.href = 'https://www.google.com/maps/search/?api=1&query=' + encodedAddr;
+    gmapBtn.style.display = 'inline-flex';
+  }
+
+  function checkProfileBeforeApply() {
+    const role = getRole();
+    if (role === 'ADMIN') return true;
+    if (!myProfile || !myProfile.profileComplete) {
+      showToast('Vui lòng hoàn thiện thông tin cá nhân trước khi đăng ký thuê!', true);
+      setTimeout(() => openProfileModal(), 500);
+      return false;
+    }
+    return true;
+  }
+
+  function toggleApplyForm() {
+    const box = document.getElementById('applyFormBox');
+    if (!box.classList.contains('show') && !checkProfileBeforeApply()) return;
+    box.classList.toggle('show');
+    if (box.classList.contains('show')) {
+      const today = new Date().toISOString().split('T')[0];
+      if (!document.getElementById('modalStartDate').value) {
+        document.getElementById('modalStartDate').value = today;
+      }
+    }
+  }
+
+  async function submitApplyModal() {
+    if (!currentDetailRoom) return;
+    const startDate = document.getElementById('modalStartDate').value;
+    const endDate = document.getElementById('modalEndDate').value;
+    if (!startDate || !endDate) { showToast('Vui lòng chọn ngày bắt đầu và kết thúc!', true); return; }
+    if (endDate <= startDate) { showToast('Ngày kết thúc phải sau ngày bắt đầu!', true); return; }
+    const body = { roomId: currentDetailRoom.id, startDate, endDate, note: document.getElementById('modalNote').value };
+    try {
+      const res = await fetch(API + '/api/rental-requests', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      if (res.ok) {
+        showToast('Đã gửi yêu cầu thuê! Chờ chủ nhà duyệt.');
+        document.getElementById('applyFormBox').classList.remove('show');
+        closeDetail();
+      } else {
+        const d = await res.json();
+        showToast(d.message || 'Lỗi gửi yêu cầu', true);
+      }
+    } catch(e) { showToast('Lỗi kết nối', true); }
+  }
+
+  function closeDetail() {
+    document.getElementById('detailModal').classList.remove('open');
+    document.body.style.overflow = '';
+    currentDetailRoom = null;
+  }
+
+  document.getElementById('detailModal').addEventListener('click', function(e) {
+    if (e.target === this) closeDetail();
+  });
+
+  // ── SEARCH & FILTERS ──
+  function doSearch() { loadRooms(); }
+
+  function filterCat(el, cat) {
+    document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    catFilter = cat;
+    document.getElementById('breadCat').textContent =
+      cat === 'phong tro' ? 'Phòng trọ' :
+      cat === 'nha nguyen can' ? 'Nhà nguyên căn' :
+      cat === 'can ho' ? 'Căn hộ' :
+      cat === 'studio' ? 'Studio' :
+      cat === 'o ghep' ? 'Ở ghép' : 'Tất cả';
+    applyFilters();
+  }
+
+  function sortBy(el, type) {
+    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    currentSort = type;
+    applyFilters();
+  }
+
+  function setPrice(el, min, max) {
+    el.closest('.filter-links').querySelectorAll('.fl').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    priceMin = min; priceMax = max;
+    loadRooms();
+  }
+
+  function setArea(el, min, max) {
+    el.closest('.filter-links').querySelectorAll('.fl').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    areaMin = min; areaMax = max;
+    loadRooms();
+  }
+
+  // ── AUTH ──
+  function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = '/login';
+  }
+
+  // ── TOAST ──
+  function showToast(msg, isError = false) {
+    const t = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    t.className = 'toast' + (isError ? ' error' : '');
+    t.querySelector('i').className = isError ? 'fa-solid fa-circle-exclamation' : 'fa-solid fa-circle-check';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  function esc(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  // ── PROFILE ──
+  let myProfile = null;
+
+  async function loadMyProfile() {
+    if (!token) return;
+    const role = getRole();
+    if (role === 'ADMIN') return;
+    try {
+      const res = await fetch(API + '/api/profile', { headers: { 'Authorization': 'Bearer ' + token } });
+      if (res.ok) {
+        const json = await res.json();
+        myProfile = json.data || json;
+        // re-render header to show avatar / profile menu item
+        renderHeader();
+      }
+    } catch(e) {}
+  }
+
+  function openProfileModal() {
+    const m = document.getElementById('profileModalOverlay');
+    if (!m) return;
+    if (myProfile) {
+      document.getElementById('pfFullName').value = myProfile.fullName || '';
+      document.getElementById('pfPhone').value = myProfile.phone || '';
+      document.getElementById('pfEmail').value = myProfile.email || '';
+      document.getElementById('pfCccdNumber').value = myProfile.cccdNumber || '';
+      document.getElementById('pfBankAccount').value = myProfile.bankAccount || '';
+      document.getElementById('pfBankName').value = myProfile.bankName || '';
+      document.getElementById('profileAvatarUrl').value = myProfile.avatarUrl || '';
+      document.getElementById('pfCccdFrontUrl').value = myProfile.cccdFrontUrl || '';
+      document.getElementById('pfCccdBackUrl').value = myProfile.cccdBackUrl || '';
+      const avatarImg = document.getElementById('profileAvatarPreview');
+      const avatarInit = document.getElementById('profileAvatarInitials');
+      if (myProfile.avatarUrl) {
+        avatarImg.src = myProfile.avatarUrl; avatarImg.style.display = 'block';
+        avatarInit.style.display = 'none';
+      } else {
+        avatarImg.style.display = 'none';
+        const name = myProfile.fullName || 'U';
+        avatarInit.textContent = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+        avatarInit.style.display = '';
+      }
+      const frontImg = document.getElementById('cccdFrontPreview');
+      if (myProfile.cccdFrontUrl) {
+        frontImg.src = myProfile.cccdFrontUrl; frontImg.style.display = 'block';
+        document.getElementById('cccdFrontIcon').style.display = 'none';
+        document.getElementById('cccdFrontLbl').style.display = 'none';
+      }
+      const backImg = document.getElementById('cccdBackPreview');
+      if (myProfile.cccdBackUrl) {
+        backImg.src = myProfile.cccdBackUrl; backImg.style.display = 'block';
+        document.getElementById('cccdBackIcon').style.display = 'none';
+        document.getElementById('cccdBackLbl').style.display = 'none';
+      }
+    }
+    m.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeProfileModal() {
+    const m = document.getElementById('profileModalOverlay');
+    if (m) m.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  async function handleAvatarSelect(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const fd = new FormData();
+    fd.append('file', file);
+    try {
+      const res = await fetch(API + '/api/upload/image', {
+        method: 'POST', headers: { 'Authorization': 'Bearer ' + token }, body: fd
+      });
+      const json = await res.json();
+      if (!res.ok) { showToast(json.message || 'Lỗi upload', true); return; }
+      const url = json.data.url;
+      document.getElementById('profileAvatarUrl').value = url;
+      const avatarImg = document.getElementById('profileAvatarPreview');
+      avatarImg.src = url; avatarImg.style.display = 'block';
+      document.getElementById('profileAvatarInitials').style.display = 'none';
+    } catch(e) { showToast('Lỗi kết nối', true); }
+  }
+
+  async function handleCccdUpload(event, side) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const fd = new FormData();
+    fd.append('file', file);
+    try {
+      const res = await fetch(API + '/api/upload/image', {
+        method: 'POST', headers: { 'Authorization': 'Bearer ' + token }, body: fd
+      });
+      const json = await res.json();
+      if (!res.ok) { showToast(json.message || 'Lỗi upload', true); return; }
+      const url = json.data.url;
+      if (side === 'front') {
+        document.getElementById('pfCccdFrontUrl').value = url;
+        const img = document.getElementById('cccdFrontPreview');
+        img.src = url; img.style.display = 'block';
+        document.getElementById('cccdFrontIcon').style.display = 'none';
+        document.getElementById('cccdFrontLbl').style.display = 'none';
+      } else {
+        document.getElementById('pfCccdBackUrl').value = url;
+        const img = document.getElementById('cccdBackPreview');
+        img.src = url; img.style.display = 'block';
+        document.getElementById('cccdBackIcon').style.display = 'none';
+        document.getElementById('cccdBackLbl').style.display = 'none';
+      }
+    } catch(e) { showToast('Lỗi kết nối', true); }
+  }
+
+  async function saveProfile() {
+    const body = {
+      fullName: document.getElementById('pfFullName').value.trim(),
+      phone: document.getElementById('pfPhone').value.trim(),
+      cccdNumber: document.getElementById('pfCccdNumber').value.trim(),
+      bankAccount: document.getElementById('pfBankAccount').value.trim(),
+      bankName: document.getElementById('pfBankName').value.trim(),
+      avatarUrl: document.getElementById('profileAvatarUrl').value.trim(),
+      cccdFrontUrl: document.getElementById('pfCccdFrontUrl').value.trim(),
+      cccdBackUrl: document.getElementById('pfCccdBackUrl').value.trim(),
+    };
+    if (!body.fullName) { showToast('Họ tên không được để trống', true); return; }
+    try {
+      const res = await fetch(API + '/api/profile', {
+        method: 'PUT',
+        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const json = await res.json();
+      if (!res.ok) { showToast(json.message || 'Lỗi cập nhật', true); return; }
+      myProfile = json.data || json;
+      // update stored user name
+      userData.fullName = myProfile.fullName;
+      localStorage.setItem('user', JSON.stringify(userData));
+      showToast('Cập nhật thông tin cá nhân thành công!');
+      closeProfileModal();
+      renderHeader();
+      await loadMyProfile();
+    } catch(e) { showToast('Lỗi kết nối', true); }
+  }
+
+  // ── CONTACT OWNER ──
+  async function openContactOwner() {
+    if (!currentDetailRoom) return;
+    const r = currentDetailRoom;
+    const modal = document.getElementById('contactOwnerModal');
+
+    try {
+      const res = await fetch(API + '/api/marketplace/buildings/' + r.buildingId + '/owner');
+      if (!res.ok) { showToast('Không thể tải thông tin chủ nhà', true); return; }
+      const owner = (await res.json()).data;
+
+      // Avatar
+      const initials = (owner.fullName || 'C').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+      document.getElementById('coAvatar').innerHTML = owner.avatarUrl
+        ? `<img src="${owner.avatarUrl}" style="width:100%;height:100%;object-fit:cover">`
+        : initials;
+
+      document.getElementById('coName').textContent = owner.fullName || 'Chủ nhà';
+      document.getElementById('coBuildingName').textContent = owner.buildingName || '';
+      document.getElementById('coPhone').textContent = owner.phone || 'Chưa cập nhật';
+      document.getElementById('coEmail').textContent = owner.email || '';
+      document.getElementById('coAddress').textContent = owner.buildingAddress || '';
+
+      // Zalo - dung SĐT để tạo link zalo.me tự động
+      const zaloSection = document.getElementById('coZaloSection');
+      const noPhone = document.getElementById('coNoPhone');
+      const zaloLinkBtn = document.getElementById('coZaloLinkBtn');
+
+      if (owner.phone) {
+        const phone = owner.phone.replace(/\s/g, '');
+        const zaloUrl = 'https://zalo.me/' + phone;
+
+        // QR code
+        const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(zaloUrl);
+        document.getElementById('coZaloQR').innerHTML = `<img src="${qrUrl}" style="width:180px;height:180px;border-radius:12px;border:3px solid #bfdbfe" alt="QR Zalo">`;
+        document.getElementById('coZaloBtn').href = zaloUrl;
+        zaloLinkBtn.href = zaloUrl;
+        zaloLinkBtn.style.display = 'flex';
+        zaloSection.style.display = 'block';
+        noPhone.style.display = 'none';
+      } else {
+        zaloSection.style.display = 'none';
+        zaloLinkBtn.style.display = 'none';
+        noPhone.style.display = 'block';
+      }
+
+      modal.classList.add('open');
+    } catch(e) {
+      showToast('Lỗi tải thông tin chủ nhà', true);
+    }
+  }
+
+  function closeContactOwner() {
+    document.getElementById('contactOwnerModal').classList.remove('open');
+  }
+
+  init();
+</script>
+<footer style="background:#2C1810;color:#D4B09A;padding:24px 5%;text-align:center;font-size:12px;line-height:1.8;">
+  <strong style="color:#fff;">Thành viên nhóm:</strong><br>
+  Thái Thiên Thuận — 2280603159 — thuankapa989@gmail.com<br>
+  Vũ Mạnh Cường — 2280600364<br>
+  Trần Văn Quyến — 2280602687 — quyentrannn1810@gmail.com<br>
+  <span style="white-space:nowrap">Phan Trung Hiếu — 2280619060 — trunghieuphan.31102002@gmail.com</span><br>
+  <strong style="color:#fff;">GVHD:</strong> Thầy Trịnh Đồng Thạch Trúc
+</footer>
+</body>
+</html>

@@ -1,0 +1,89 @@
+@import "./styles/design-tokens.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  body {
+    @apply m-0 bg-page font-sans text-navy antialiased;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  a {
+    @apply no-underline;
+  }
+}
+
+@layer components {
+  .shadow-soft {
+    box-shadow: 0 10px 35px rgba(27, 43, 75, 0.08);
+  }
+
+  .bg-app-public {
+    background: #f0fdf4;
+  }
+
+  .bg-app-dashboard {
+    background: #f0f4f8;
+  }
+
+  .bg-auth {
+    background: #fdf6ed;
+  }
+
+  .eyebrow {
+    @apply text-xs font-black uppercase tracking-[0.24em] text-brand-orange;
+  }
+
+  .page-display-title {
+    @apply mt-3 font-display text-4xl font-bold text-slate-900 md:text-5xl;
+  }
+
+  .page-muted-copy {
+    @apply mt-3 max-w-3xl text-sm leading-7 text-slate-500;
+  }
+
+  .public-hero-card {
+    @apply rounded-[28px] border border-green-100 bg-white p-6 shadow-soft md:p-8;
+  }
+
+  .tenant-hero {
+    @apply rounded-[28px] bg-gradient-to-r from-brand-navy via-[#2D1B69] to-brand-navy px-6 py-8 text-white shadow-soft md:px-8;
+  }
+
+  .tenant-hero .eyebrow {
+    @apply text-white/60;
+  }
+
+  .tenant-hero .page-display-title {
+    @apply text-white;
+  }
+
+  .tenant-hero .page-muted-copy {
+    @apply text-white/70;
+  }
+
+  .auth-input {
+    @apply w-full rounded-xl border border-[#EDD8C0] bg-[#FDF6ED] px-4 py-3 text-sm font-semibold text-auth-text outline-none transition placeholder:text-[#9B7B66] focus:border-[#D4845A] focus:bg-white focus:ring-4 focus:ring-[#D4845A]/10;
+  }
+
+  .auth-submit {
+    @apply inline-flex w-full items-center justify-center rounded-xl bg-[#D4845A] px-5 py-3 text-sm font-extrabold text-white transition hover:-translate-y-0.5 hover:bg-[#B5673E] disabled:cursor-not-allowed disabled:opacity-70;
+  }
+
+  .tenant-input {
+    @apply w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-brand-orange focus:bg-white focus:ring-4 focus:ring-orange-200/60;
+  }
+
+  .tenant-submit {
+    @apply inline-flex w-full items-center justify-center rounded-2xl bg-brand-orange px-5 py-3 text-sm font-extrabold text-white shadow-lg shadow-orange-500/20 transition hover:-translate-y-0.5 hover:bg-brand-orange-dark disabled:cursor-not-allowed disabled:opacity-70;
+  }
+}
